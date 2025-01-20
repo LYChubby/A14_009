@@ -1,6 +1,7 @@
 package com.example.villaapps.ui.view.pages.villaview
 
-import androidx.compose.foundation.Image
+import android.os.Build
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,27 +12,34 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.villaapps.model.DaftarVilla
 import com.example.villaapps.navigation.DestinasiNavigasi
+import com.example.villaapps.ui.customwidget.CostumeTopAppBar
+import com.example.villaapps.ui.view.viewmodel.PenyediaViewModel
 import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DaftarVillaUiState
+import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DaftarVillaViewModel
 
 object DestinasiVilla : DestinasiNavigasi {
     override val route = "daftar_villa"
@@ -164,5 +172,48 @@ fun DaftarVillaStatus(
                 )
             }
         is DaftarVillaUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
+    }
+}
+
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DaftarVillaScreen(
+    navigateToitemEntry: () -> Unit,
+    navigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    onDetailClick: (String) -> Unit = {},
+    viewModel: DaftarVillaViewModel = viewModel(factory = PenyediaViewModel.Factory)
+){
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            CostumeTopAppBar(
+                title = DestinasiVilla.titleRes,
+                canNavigateBack = true,
+                scrollBehavior = scrollBehavior,
+                navigateUp = navigateBack
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = navigateToitemEntry,
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.padding(18.dp)
+            ){
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Villa")
+            }
+        },
+    ){ innerPadding ->
+        DaftarVillaStatus(
+            daftarVillaUiState = viewModel.daftarVillaUiState,
+            retryAction = { viewModel.getDaftarVilla() },
+            modifier = Modifier.padding(innerPadding),
+            onDetailClick = onDetailClick, onDeleteClick = {
+                viewModel.deleteDaftarVilla(it.idVilla)
+                viewModel.getDaftarVilla()
+            }
+        )
     }
 }

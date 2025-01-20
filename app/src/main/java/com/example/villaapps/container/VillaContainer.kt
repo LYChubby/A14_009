@@ -8,11 +8,11 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 
-interface AppContainer {
+interface AppVillaContainer {
     val daftarVillaRepository: DaftarVillaRepository
 }
 
-class VillaContainer : AppContainer {
+class VillaContainer : AppVillaContainer {
 
     private val baseUrl = "http://10.0.2.2:3000/api/villa/"
     private val json = Json { ignoreUnknownKeys = true  }

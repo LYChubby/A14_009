@@ -34,5 +34,4 @@ interface ReviewServices {
     @DELETE("{idReview}")
     suspend fun deleteReview(@Path("idReview") idReview: Int): Response<Void>
 
-
 }

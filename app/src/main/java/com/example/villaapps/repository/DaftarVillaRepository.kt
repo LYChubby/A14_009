@@ -18,20 +18,20 @@ interface DaftarVillaRepository {
 }
 
 class NetworkDaftarVillaRepository(
-    private val daftarVillaService: VillaService
+    private val daftarVillaApiService: VillaService
 ) : DaftarVillaRepository {
 
     override suspend fun insertVilla(daftarVilla: DaftarVilla) {
-        daftarVillaService.insertVilla(daftarVilla)
+        daftarVillaApiService.insertVilla(daftarVilla)
     }
 
     override suspend fun updateVilla(idVilla: Int, daftarVilla: DaftarVilla) {
-        daftarVillaService.updateVilla(idVilla, daftarVilla)
+        daftarVillaApiService.updateVilla(idVilla, daftarVilla)
     }
 
     override suspend fun deleteVilla(idVilla: Int) {
         try {
-            val response = daftarVillaService.deleteVilla(idVilla)
+            val response = daftarVillaApiService.deleteVilla(idVilla)
             if (!response.isSuccessful) {
                 throw Exception("Failed to Delete Villa. HTTP Status Code: ${response.code()}")
             } else {
@@ -44,9 +44,9 @@ class NetworkDaftarVillaRepository(
     }
 
     override suspend fun getAllVilla(): DaftarVillaResponse =
-        daftarVillaService.getAllVilla()
+        daftarVillaApiService.getAllVilla()
 
     override suspend fun getVillaById(idVilla: Int): DaftarVilla {
-        return daftarVillaService.getVillaById(idVilla).data
+        return daftarVillaApiService.getVillaById(idVilla).data
     }
 }

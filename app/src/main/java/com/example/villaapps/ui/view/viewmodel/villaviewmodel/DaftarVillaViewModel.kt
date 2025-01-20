@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 
 sealed class DaftarVillaUiState {
-    data class Success(val data: List<DaftarVilla>) : DaftarVillaUiState()
+    data class Success(val daftarVilla: List<DaftarVilla>) : DaftarVillaUiState()
     object Error : DaftarVillaUiState()
     object Loading : DaftarVillaUiState()
 }

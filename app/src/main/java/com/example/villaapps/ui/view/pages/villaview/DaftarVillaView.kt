@@ -3,6 +3,7 @@ package com.example.villaapps.ui.view.pages.villaview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.villaapps.model.DaftarVilla
 import com.example.villaapps.navigation.DestinasiNavigasi
+import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DaftarVillaUiState
 
 object DestinasiVilla : DestinasiNavigasi {
     override val route = "daftar_villa"
@@ -133,3 +135,34 @@ fun OnError(
     }
 }
 
+@Composable
+fun DaftarVillaStatus(
+    daftarVillaUiState: DaftarVillaUiState,
+    retryAction: () -> Unit,
+    modifier: Modifier = Modifier,
+    onDetailClick: (String) -> Unit,
+    onDeleteClick: (DaftarVilla) -> Unit = {},
+){
+    when (daftarVillaUiState) {
+        is DaftarVillaUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
+
+        is DaftarVillaUiState.Success ->
+            if (daftarVillaUiState.daftarVilla.isEmpty()) {
+                return Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = "Tidak Ada Data Villa")
+                }
+            } else {
+                DaftarVillaLayout(
+                    daftarVilla = daftarVillaUiState.daftarVilla,
+                    modifier = modifier.fillMaxWidth(),
+                    onDetailClick = {
+                        onDetailClick(it.idVilla.toString())
+                    },
+                    onDeleteClick = {
+                        onDeleteClick(it)
+                    }
+                )
+            }
+        is DaftarVillaUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
+    }
+}

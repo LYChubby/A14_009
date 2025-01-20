@@ -11,7 +11,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.villaapps.ui.view.pages.DestinasiHome
 import com.example.villaapps.ui.view.pages.HomeView
 import com.example.villaapps.ui.view.pages.villaview.DaftarVillaScreen
+import com.example.villaapps.ui.view.pages.villaview.DestinasiInsertVilla
 import com.example.villaapps.ui.view.pages.villaview.DestinasiVilla
+import com.example.villaapps.ui.view.pages.villaview.EntryVillaScreen
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
@@ -32,10 +34,19 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         }
         composable(DestinasiVilla.route) {
             DaftarVillaScreen(
-                navigateToitemEntry = {  },
+                navigateToitemEntry = { navController.navigate(DestinasiInsertVilla.route) },
                 navigateBack = { navController.popBackStack() },
                 onDetailClick = {  }
             )
+        }
+        composable(DestinasiInsertVilla.route) {
+            EntryVillaScreen(navigateBack = {
+                navController.navigate(DestinasiVilla.route) {
+                    popUpTo(DestinasiVilla.route) {
+                        inclusive = true
+                    }
+                }
+            })
         }
     }
 }

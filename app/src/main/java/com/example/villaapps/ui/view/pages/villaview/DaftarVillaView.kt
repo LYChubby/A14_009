@@ -70,6 +70,10 @@ fun DaftarVillaCard(
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = daftarVilla.kamarTersedia.toString() + "\nkamar tersedia",
+                    style = MaterialTheme.typography.titleMedium
+                )
                 IconButton(
                     onClick = { onDeleteClick(daftarVilla) }) {
                     Icon(
@@ -77,10 +81,6 @@ fun DaftarVillaCard(
                         contentDescription = null
                     )
                 }
-                Text(
-                    text = daftarVilla.kamarTersedia.toString(),
-                    style = MaterialTheme.typography.titleMedium
-                )
             }
             Text(
                 text = daftarVilla.alamat,

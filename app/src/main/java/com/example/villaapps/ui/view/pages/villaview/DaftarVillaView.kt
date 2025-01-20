@@ -1,12 +1,16 @@
 package com.example.villaapps.ui.view.pages.villaview
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
@@ -66,6 +70,32 @@ fun DaftarVillaCard(
             Text(
                 text = daftarVilla.alamat,
                 style = MaterialTheme.typography.titleMedium
+            )
+        }
+    }
+}
+
+@Composable
+fun DaftarVillaLayout(
+    daftarVilla: List<DaftarVilla>,
+    modifier: Modifier = Modifier,
+    onDetailClick: (DaftarVilla) -> Unit,
+    onDeleteClick: (DaftarVilla) -> Unit = {}
+) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(daftarVilla) { villa ->
+            DaftarVillaCard(
+                daftarVilla = villa,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onDetailClick(villa) },
+                onDeleteClick = {
+                    onDeleteClick(villa)
+                }
             )
         }
     }

@@ -104,7 +104,7 @@ fun UpdateBodyVilla(
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UpdateMhsScreen(
+fun UpdateVillaScreen(
     idVilla: Int,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,

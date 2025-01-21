@@ -16,9 +16,11 @@ import com.example.villaapps.ui.view.pages.villaview.DaftarVillaScreen
 import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla
 import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla.IDVILLA
 import com.example.villaapps.ui.view.pages.villaview.DestinasiInsertVilla
+import com.example.villaapps.ui.view.pages.villaview.DestinasiUpdateVilla
 import com.example.villaapps.ui.view.pages.villaview.DestinasiVilla
 import com.example.villaapps.ui.view.pages.villaview.DetailVillaView
 import com.example.villaapps.ui.view.pages.villaview.EntryVillaScreen
+import com.example.villaapps.ui.view.pages.villaview.UpdateVillaScreen
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
@@ -74,12 +76,31 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                         navController.popBackStack()
                     },
                     onEditClick = {
-//                        navController.navigate("${DestinasiUpdate.route}/$it")
+                        navController.navigate("${DestinasiUpdateVilla.route}/$it")
                     },
                     idVilla = idVilla,
                     onDeleteClick = {
                         navController.popBackStack()
                     }
+                )
+            }
+        }
+
+        composable(
+            DestinasiUpdateVilla.routeWithArgs,
+            arguments = listOf(
+                navArgument(DestinasiUpdateVilla.IDVILLA) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            val idVilla = it.arguments?.getInt(DestinasiUpdateVilla.IDVILLA)
+            idVilla?.let { idVilla ->
+                UpdateVillaScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                    idVilla = idVilla
                 )
             }
         }

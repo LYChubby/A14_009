@@ -11,6 +11,7 @@ import com.example.villaapps.VillaApplications
 import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DaftarVillaViewModel
 import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DetailDaftarVillaViewModel
 import com.example.villaapps.ui.view.viewmodel.villaviewmodel.InsertDaftarVillaViewModel
+import com.example.villaapps.ui.view.viewmodel.villaviewmodel.UpdateDaftarVillaViewModel
 
 object PenyediaViewModel {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -27,6 +28,9 @@ object PenyediaViewModel {
                 createSavedStateHandle(),
                 aplikasiReservasi().villacontainer.daftarVillaRepository
             )
+        }
+        initializer {
+            UpdateDaftarVillaViewModel(aplikasiReservasi().villacontainer.daftarVillaRepository)
         }
     }
 }

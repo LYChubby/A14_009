@@ -1,4 +1,4 @@
-package com.example.villaapps.ui.view.pages.villaview
+package com.example.villaapps.ui.view.pages.pelangganview
 
 import android.os.Build
 import androidx.annotation.RequiresExtension
@@ -24,23 +24,24 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.villaapps.navigation.DestinasiNavigasi
 import com.example.villaapps.ui.customwidget.CostumeTopAppBar
+import com.example.villaapps.ui.view.pages.villaview.DestinasiInsertVilla
 import com.example.villaapps.ui.view.viewmodel.PenyediaViewModel
-import com.example.villaapps.ui.view.viewmodel.villaviewmodel.InsertDaftarVillaUiEvent
-import com.example.villaapps.ui.view.viewmodel.villaviewmodel.InsertDaftarVillaUiState
-import com.example.villaapps.ui.view.viewmodel.villaviewmodel.InsertDaftarVillaViewModel
+import com.example.villaapps.ui.view.viewmodel.pelangganviewmodel.InsertPelangganUiEvent
+import com.example.villaapps.ui.view.viewmodel.pelangganviewmodel.InsertPelangganUiState
+import com.example.villaapps.ui.view.viewmodel.pelangganviewmodel.InsertPelangganViewModel
 import kotlinx.coroutines.launch
 
-object DestinasiInsertVilla: DestinasiNavigasi {
-    override val route = "Item_Entry"
-    override val titleRes = "Tambah Villa"
+object DestinasiInsertPelanggan: DestinasiNavigasi {
+    override val route = "Entry_Pelanggan"
+    override val titleRes = "Tambah Pelanggan"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormInputVilla(
-    insertDaftarVillaUiEvent: InsertDaftarVillaUiEvent,
+fun FormInputPelanggan(
+    insertPelangganUiEvent: InsertPelangganUiEvent,
     modifier: Modifier = Modifier,
-    onValueChange: (InsertDaftarVillaUiEvent) -> Unit = {},
+    onValueChange: (InsertPelangganUiEvent) -> Unit = {},
     enabled: Boolean = true
 ) {
     Column(
@@ -48,26 +49,17 @@ fun FormInputVilla(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         OutlinedTextField(
-            value = insertDaftarVillaUiEvent.namaVilla,
-            onValueChange = { onValueChange(insertDaftarVillaUiEvent.copy(namaVilla = it)) },
-            label = { Text(text = "Nama Villa") },
+            value = insertPelangganUiEvent.namaPelanggan,
+            onValueChange = { onValueChange(insertPelangganUiEvent.copy(namaPelanggan = it)) },
+            label = { Text(text = "Nama") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
         )
         OutlinedTextField(
-            value = insertDaftarVillaUiEvent.alamat,
-            onValueChange = { onValueChange(insertDaftarVillaUiEvent.copy(alamat = it)) },
-            label = { Text(text = "Alamat") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true
-        )
-        OutlinedTextField(
-            value = insertDaftarVillaUiEvent.kamarTersedia.toString(),
-            onValueChange = { val newValue = it.toIntOrNull() ?: 0
-                onValueChange(insertDaftarVillaUiEvent.copy(kamarTersedia = newValue)) },
-            label = { Text(text = "Kamar Tersedia") },
+            value = insertPelangganUiEvent.noHp,
+            onValueChange = { onValueChange(insertPelangganUiEvent.copy(noHp = it)) },
+            label = { Text(text = "NIM") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
@@ -86,9 +78,9 @@ fun FormInputVilla(
 }
 
 @Composable
-fun EntryBodyVilla(
-    insertDaftarVillaUiState: InsertDaftarVillaUiState,
-    onDaftarVillaValueChange: (InsertDaftarVillaUiEvent) -> Unit,
+fun EntryBodyPelanggan(
+    insertPelangganUiState: InsertPelangganUiState,
+    onPelangganValueChange: (InsertPelangganUiEvent) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -96,9 +88,9 @@ fun EntryBodyVilla(
         verticalArrangement = Arrangement.spacedBy(18.dp),
         modifier = modifier.padding(26.dp)
     ) {
-        FormInputVilla(
-            insertDaftarVillaUiEvent = insertDaftarVillaUiState.insertDaftarVillaUiEvent,
-            onValueChange = onDaftarVillaValueChange,
+        FormInputPelanggan(
+            insertPelangganUiEvent = insertPelangganUiState.insertPelangganUiEvent,
+            onValueChange = onPelangganValueChange,
             modifier = Modifier.fillMaxWidth()
         )
         Button(
@@ -113,10 +105,10 @@ fun EntryBodyVilla(
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntryVillaScreen(
+fun EntryMhsScreen(
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: InsertDaftarVillaViewModel = viewModel(factory = PenyediaViewModel.Factory)
+    viewModel: InsertPelangganViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -125,7 +117,7 @@ fun EntryVillaScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CostumeTopAppBar(
-                title = DestinasiInsertVilla.titleRes,
+                title = DestinasiInsertPelanggan.titleRes,
                 canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 navigateUp = navigateBack
@@ -133,12 +125,12 @@ fun EntryVillaScreen(
         }
     ) {
             innerPadding ->
-        EntryBodyVilla(
-            insertDaftarVillaUiState = viewModel.insertDaftarVillaUiState,
-            onDaftarVillaValueChange = viewModel::updateInsertDaftarVillaUiState,
+        EntryBodyPelanggan(
+            insertPelangganUiState = viewModel.insertPelangganUiState,
+            onPelangganValueChange = viewModel::updateInsertPelangganUiState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.insertDaftarVilla()
+                    viewModel.insertPelanggan()
                     navigateBack()
                 }
             },

@@ -14,6 +14,7 @@ import com.example.villaapps.ui.view.pages.DestinasiHome
 import com.example.villaapps.ui.view.pages.HomeView
 import com.example.villaapps.ui.view.pages.villaview.DaftarVillaScreen
 import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla
+import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla.IDVILLA
 import com.example.villaapps.ui.view.pages.villaview.DestinasiInsertVilla
 import com.example.villaapps.ui.view.pages.villaview.DestinasiVilla
 import com.example.villaapps.ui.view.pages.villaview.DetailVillaView
@@ -40,7 +41,12 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
             DaftarVillaScreen(
                 navigateToitemEntry = { navController.navigate(DestinasiInsertVilla.route) },
                 navigateBack = { navController.popBackStack() },
-                onDetailClick = { navController.navigate(DestinasiDetailVilla.route) }
+                onDetailClick = { idVilla ->
+                    navController.navigate("${DestinasiDetailVilla.route}/$idVilla")
+                    println(
+                        "PengelolaHalaman: ID Villa = $idVilla"
+                    )
+                }
             )
         }
         composable(DestinasiInsertVilla.route) {
@@ -56,12 +62,12 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         composable(
             DestinasiDetailVilla.routeWithArgs,
             arguments = listOf(
-                navArgument(DestinasiDetailVilla.IDVILLA) {
+                navArgument(IDVILLA) {
                     type = NavType.IntType
                 }
             )
         ) {
-            val idVilla = it.arguments?.getInt(DestinasiDetailVilla.IDVILLA)
+            val idVilla = it.arguments?.getInt(IDVILLA)
             idVilla?.let { idVilla ->
                 DetailVillaView(
                     navigateBack = {

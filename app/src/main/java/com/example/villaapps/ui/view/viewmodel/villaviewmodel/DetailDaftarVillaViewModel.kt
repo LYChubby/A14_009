@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.villaapps.model.DaftarVilla
 import com.example.villaapps.repository.DaftarVillaRepository
+import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -35,7 +36,7 @@ class DetailDaftarVillaViewModel(
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    private fun getDaftarVillaById() {
+    fun getDaftarVillaById() {
         viewModelScope.launch {
             detailDaftarVillaUiState = DetailDaftarVillaUiState.Loading
             detailDaftarVillaUiState = try {

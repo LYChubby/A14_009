@@ -105,7 +105,7 @@ fun EntryBodyPelanggan(
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntryMhsScreen(
+fun EntryPelangganScreen(
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: InsertPelangganViewModel = viewModel(factory = PenyediaViewModel.Factory)

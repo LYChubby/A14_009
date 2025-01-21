@@ -12,6 +12,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.villaapps.ui.view.pages.DestinasiHome
 import com.example.villaapps.ui.view.pages.HomeView
+import com.example.villaapps.ui.view.pages.pelangganview.DestinasiDetailPelanggan
+import com.example.villaapps.ui.view.pages.pelangganview.DestinasiInsertPelanggan
+import com.example.villaapps.ui.view.pages.pelangganview.DestinasiPelanggan
+import com.example.villaapps.ui.view.pages.pelangganview.DestinasiUpdatePelanggan
+import com.example.villaapps.ui.view.pages.pelangganview.DetailPelangganView
+import com.example.villaapps.ui.view.pages.pelangganview.EntryPelangganScreen
+import com.example.villaapps.ui.view.pages.pelangganview.PelangganScreen
 import com.example.villaapps.ui.view.pages.villaview.DaftarVillaScreen
 import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla
 import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla.IDVILLA
@@ -34,7 +41,7 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         composable(DestinasiHome.route) {
             HomeView(
                 onDaftarVillaClick = { navController.navigate(DestinasiVilla.route) },
-                onDaftarPelangganClick = {  },
+                onDaftarPelangganClick = { navController.navigate(DestinasiPelanggan.route) },
                 onDaftarReviewClick = {  },
                 onDaftarReservasiClick = {  }
             )
@@ -101,6 +108,52 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                         navController.popBackStack()
                     },
                     idVilla = idVilla
+                )
+            }
+        }
+
+        composable(DestinasiPelanggan.route) {
+            PelangganScreen(
+                navigateToitemEntry = { navController.navigate(DestinasiInsertPelanggan.route) },
+                navigateBack = { navController.popBackStack() },
+                onDetailClick = { idPelanggan ->
+                    navController.navigate("${DestinasiDetailPelanggan.route}/$idPelanggan")
+                    println(
+                        "PengelolaHalaman: ID Pelanggan = $idPelanggan"
+                    )
+                }
+            )
+        }
+        composable(DestinasiInsertPelanggan.route) {
+            EntryPelangganScreen(navigateBack = {
+                navController.navigate(DestinasiPelanggan.route) {
+                    popUpTo(DestinasiPelanggan.route) {
+                        inclusive = true
+                    }
+                }
+            })
+        }
+        composable(
+            DestinasiDetailPelanggan.routeWithArgs,
+            arguments = listOf(
+                navArgument(DestinasiDetailPelanggan.IDPELANGGAN) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            val idPelanggan = it.arguments?.getInt(DestinasiDetailPelanggan.IDPELANGGAN)
+            idPelanggan?.let { idPelanggan ->
+                DetailPelangganView(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                    onEditClick = {
+                        navController.navigate("${DestinasiUpdatePelanggan.route}/$it")
+                    },
+                    idPelanggan = idPelanggan,
+                    onDeleteClick = {
+                        navController.popBackStack()
+                    }
                 )
             }
         }

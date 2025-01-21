@@ -40,7 +40,7 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
             DaftarVillaScreen(
                 navigateToitemEntry = { navController.navigate(DestinasiInsertVilla.route) },
                 navigateBack = { navController.popBackStack() },
-                onDetailClick = {  }
+                onDetailClick = { navController.navigate(DestinasiDetailVilla.route) }
             )
         }
         composable(DestinasiInsertVilla.route) {

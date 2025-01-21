@@ -19,6 +19,7 @@ import com.example.villaapps.ui.view.pages.pelangganview.DestinasiUpdatePelangga
 import com.example.villaapps.ui.view.pages.pelangganview.DetailPelangganView
 import com.example.villaapps.ui.view.pages.pelangganview.EntryPelangganScreen
 import com.example.villaapps.ui.view.pages.pelangganview.PelangganScreen
+import com.example.villaapps.ui.view.pages.pelangganview.UpdatePelangganScreen
 import com.example.villaapps.ui.view.pages.villaview.DaftarVillaScreen
 import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla
 import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla.IDVILLA
@@ -154,6 +155,24 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                     onDeleteClick = {
                         navController.popBackStack()
                     }
+                )
+            }
+        }
+        composable(
+            DestinasiUpdatePelanggan.routeWithArgs,
+            arguments = listOf(
+                navArgument(DestinasiUpdatePelanggan.IDPELANGGAN) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            val idPelanggan = it.arguments?.getInt(DestinasiUpdatePelanggan.IDPELANGGAN)
+            idPelanggan?.let { idPelanggan ->
+                UpdatePelangganScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                    idPelanggan = idPelanggan
                 )
             }
         }

@@ -180,6 +180,7 @@ fun PelangganStatus(
 @Composable
 fun PelangganScreen(
     navigateToitemEntry: () -> Unit,
+    navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     onDetailClick: (String) -> Unit = {},
     viewModel: PelangganViewModel = viewModel(factory = PenyediaViewModel.Factory)
@@ -190,7 +191,8 @@ fun PelangganScreen(
         topBar = {
             CostumeTopAppBar(
                 title = DestinasiPelanggan.titleRes,
-                canNavigateBack = false,
+                canNavigateBack = true,
+                navigateUp = navigateBack,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
                     viewModel.getPelanggan()

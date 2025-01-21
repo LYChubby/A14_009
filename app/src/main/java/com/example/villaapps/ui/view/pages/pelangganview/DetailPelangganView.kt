@@ -1,4 +1,4 @@
-package com.example.villaapps.ui.view.pages.villaview
+package com.example.villaapps.ui.view.pages.pelangganview
 
 import android.os.Build
 import androidx.annotation.RequiresExtension
@@ -37,18 +37,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.villaapps.model.DaftarVilla
+import com.example.villaapps.model.Pelanggan
 import com.example.villaapps.navigation.DestinasiNavigasi
-import com.example.villaapps.ui.view.viewmodel.PenyediaViewModel
 import com.example.villaapps.ui.customwidget.CostumeTopAppBar
-import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DetailDaftarVillaUiState
-import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DetailDaftarVillaViewModel
+import com.example.villaapps.ui.view.viewmodel.PenyediaViewModel
+import com.example.villaapps.ui.view.viewmodel.pelangganviewmodel.DetailPelangganUiState
+import com.example.villaapps.ui.view.viewmodel.pelangganviewmodel.DetailPelangganViewModel
 
-object DestinasiDetailVilla: DestinasiNavigasi {
-    override val route = "detail_Villa"
-    override val titleRes = "Detail Villa"
-    const val IDVILLA = "idVilla"
-    val routeWithArgs = "$route/{$IDVILLA}"
+object DestinasiDetailPelanggan: DestinasiNavigasi {
+    override val route = "detail_Pelanggan"
+    override val titleRes = "Detail Pelanggan"
+    const val IDPELANGGAN = "idPelanggan"
+    val routeWithArgs = "$route/{$IDPELANGGAN}"
 }
 
 @Composable
@@ -76,7 +76,7 @@ private fun DeleteConfirmationDialog(
 }
 
 @Composable
-fun ComponentDetailVilla(
+fun ComponentDetailPelanggan(
     modifier: Modifier = Modifier,
     judul: String,
     isinya: String
@@ -101,9 +101,9 @@ fun ComponentDetailVilla(
 }
 
 @Composable
-fun ItemDetailVilla(
+fun ItemDetailPelanggan(
     modifier: Modifier = Modifier,
-    daftarVilla: DaftarVilla
+    pelanggan: Pelanggan
 ) {
     Card (
         modifier = modifier
@@ -116,29 +116,25 @@ fun ItemDetailVilla(
         Column (
             modifier = Modifier.padding(16.dp)
         ){
-            ComponentDetailVilla(judul = "Nama Villa", isinya = daftarVilla.namaVilla)
+            ComponentDetailPelanggan(judul = "Nama", isinya = pelanggan.namaPelanggan)
             Spacer(modifier = Modifier.padding(4.dp))
 
-            ComponentDetailVilla(judul = "Alamat", isinya = daftarVilla.alamat)
+            ComponentDetailPelanggan(judul = "No Hp", isinya = pelanggan.noHp)
             Spacer(modifier = Modifier.padding(4.dp))
-
-            ComponentDetailVilla(judul = "Kamar Tersedia", isinya = daftarVilla.kamarTersedia.toString())
-            Spacer(modifier = Modifier.padding(4.dp))
-
         }
     }
 }
 
 @Composable
-fun BodyDetailVilla(
+fun BodyDetailPelanggan(
     modifier: Modifier = Modifier,
-    detailDaftarVillaUiState: DetailDaftarVillaUiState,
+    detailPelangganUiState: DetailPelangganUiState,
     onDeleteClick: () -> Unit = { }
 ) {
     var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
 
-    when (detailDaftarVillaUiState) {
-        is DetailDaftarVillaUiState.Loading -> {
+    when (detailPelangganUiState) {
+        is DetailPelangganUiState.Loading -> {
             Box(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -146,12 +142,12 @@ fun BodyDetailVilla(
                 CircularProgressIndicator()
             }
         }
-        is DetailDaftarVillaUiState.Success -> {
+        is DetailPelangganUiState.Success -> {
             Column(
                 modifier = modifier.fillMaxWidth().padding(16.dp)
             ) {
-                ItemDetailVilla(
-                    daftarVilla = detailDaftarVillaUiState.daftarVilla,
+                ItemDetailPelanggan(
+                    pelanggan = detailPelangganUiState.pelanggan,
                     modifier = Modifier
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
@@ -174,7 +170,7 @@ fun BodyDetailVilla(
                 }
             }
         }
-        is DetailDaftarVillaUiState.Error -> {
+        is DetailPelangganUiState.Error -> {
             Box(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -191,17 +187,17 @@ fun BodyDetailVilla(
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailVillaView(
-    idVilla: Int,
+fun DetailPelangganView(
+    idPelanggan: Int,
     modifier: Modifier = Modifier,
-    viewModel: DetailDaftarVillaViewModel = viewModel(factory = PenyediaViewModel.Factory),
+    viewModel: DetailPelangganViewModel = viewModel(factory = PenyediaViewModel.Factory),
     navigateBack: () -> Unit,
     onEditClick: (String) -> Unit = { },
     onDeleteClick: () -> Unit = { }
 ) {
 
-    LaunchedEffect(idVilla) {
-        viewModel.getDaftarVillaById()
+    LaunchedEffect(idPelanggan) {
+        viewModel.getPelangganById()
     }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -209,7 +205,7 @@ fun DetailVillaView(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CostumeTopAppBar(
-                title = DestinasiDetailVilla.titleRes,
+                title = DestinasiDetailPelanggan.titleRes,
                 canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 navigateUp = navigateBack
@@ -218,23 +214,23 @@ fun DetailVillaView(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { onEditClick(idVilla.toString()) },
+                onClick = { onEditClick(idPelanggan.toString()) },
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(16.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit Villa"
+                    contentDescription = "Edit Mahasiswa"
                 )
             }
         }
     ) { innerPadding ->
 
-        BodyDetailVilla(
+        BodyDetailPelanggan(
             modifier = modifier.padding(innerPadding),
-            detailDaftarVillaUiState = viewModel.detailDaftarVillaUiState,
+            detailPelangganUiState = viewModel.detailPelangganUiState,
             onDeleteClick = {
-                viewModel.deleteDaftarVilla(idVilla)
+                viewModel.deletePelanggan(idPelanggan)
                 onDeleteClick()
             }
         )

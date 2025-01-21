@@ -31,7 +31,7 @@ import com.example.villaapps.ui.view.viewmodel.villaviewmodel.UpdateDaftarVillaV
 import kotlinx.coroutines.launch
 
 object DestinasiUpdateVilla: DestinasiNavigasi {
-    override val route = "update"
+    override val route = "Update_Villa"
     override val titleRes = "Update Villa"
     const val IDVILLA = "idVilla"
     val routeWithArgs = "$route/{$IDVILLA}"

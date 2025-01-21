@@ -31,7 +31,7 @@ import com.example.villaapps.ui.view.viewmodel.villaviewmodel.InsertDaftarVillaV
 import kotlinx.coroutines.launch
 
 object DestinasiInsertVilla: DestinasiNavigasi {
-    override val route = "Item_Entry"
+    override val route = "Entry_Villa"
     override val titleRes = "Tambah Villa"
 }
 

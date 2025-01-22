@@ -5,12 +5,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.villaapps.model.DaftarVilla
 import com.example.villaapps.model.Reservasi
 import com.example.villaapps.repository.ReservasiRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 data class InsertReservasiUiState(
-    val insertReservasiUiEvent: InsertReservasiUiEvent = InsertReservasiUiEvent()
+    val insertReservasiUiEvent: InsertReservasiUiEvent = InsertReservasiUiEvent(),
+    val daftarVilla: List<Pair<Int, String>> = emptyList(),
+    val daftarPelanggan: List<Pair<Int, String>> = emptyList(),
 )
 
 data class InsertReservasiUiEvent(
@@ -46,6 +51,8 @@ fun Reservasi.toInsertReservasiUiEvent(): InsertReservasiUiEvent = InsertReserva
 class InsertReservasiViewModel (
     private val reservasiRepository: ReservasiRepository
 ): ViewModel() {
+
+
     var insertReservasiUiState by mutableStateOf(InsertReservasiUiState())
         private set
 

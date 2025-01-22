@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.villaapps.model.DaftarVilla
 import com.example.villaapps.repository.DaftarVillaRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 data class InsertDaftarVillaUiState (
@@ -41,6 +43,21 @@ fun DaftarVilla.toInsertDaftarVillaUiEvent(): InsertDaftarVillaUiEvent = InsertD
 class InsertDaftarVillaViewModel (
     private val daftarVillaRepository: DaftarVillaRepository
 ): ViewModel() {
+
+    private val _daftarVilla = MutableStateFlow<List<Pair<Int, String>>>(emptyList())
+    val daftarVilla: StateFlow<List<Pair<Int, String>>> = _daftarVilla
+
+    init {
+        viewModelScope.launch {
+            try {
+                val response = daftarVillaRepository.getAllVilla()
+                _daftarVilla.value = response.data.map { it.idVilla to it.namaVilla }
+            } catch (e: Exception) {
+                _daftarVilla.value = emptyList()
+            }
+        }
+    }
+
     var insertDaftarVillaUiState by mutableStateOf(InsertDaftarVillaUiState())
         private set
 

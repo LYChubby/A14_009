@@ -42,4 +42,10 @@ interface ReservasiServices {
     @GET("pelanggan")
     suspend fun getDaftarPelanggan(): AllPelangganResponse
 
+    @GET("villa/{idVilla}")
+    suspend fun getVillaById(@Path("idVilla") idVilla: Int): DetailReservasiResponse
+
+    @GET("pelanggan/{idPelanggan}")
+    suspend fun getPelangganById(@Path("idPelanggan") idPelanggan: Int): DetailReservasiResponse
+
 }

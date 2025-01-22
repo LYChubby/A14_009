@@ -2,7 +2,10 @@ package com.example.villaapps.repository
 
 import com.example.villaapps.model.AllPelangganResponse
 import com.example.villaapps.model.AllReservasiResponse
+import com.example.villaapps.model.DaftarVilla
 import com.example.villaapps.model.DaftarVillaResponse
+import com.example.villaapps.model.DetailReservasiResponse
+import com.example.villaapps.model.Pelanggan
 import com.example.villaapps.model.Reservasi
 import com.example.villaapps.service.ReservasiServices
 
@@ -21,6 +24,10 @@ interface ReservasiRepository {
     suspend fun getDaftarVilla(): DaftarVillaResponse
 
     suspend fun getDaftarPelanggan(): AllPelangganResponse
+
+    suspend fun getVillaById(idVilla: Int): Reservasi
+
+    suspend fun getPelangganById(idPelanggan: Int): Reservasi
 }
 
 class NetworkReservasiRepository(
@@ -61,4 +68,12 @@ class NetworkReservasiRepository(
 
     override suspend fun getDaftarPelanggan(): AllPelangganResponse =
         reservasiApiService.getDaftarPelanggan()
+
+    override suspend fun getVillaById(idVilla: Int): Reservasi {
+        return reservasiApiService.getVillaById(idVilla).data
+    }
+
+    override suspend fun getPelangganById(idPelanggan: Int): Reservasi {
+        return reservasiApiService.getPelangganById(idPelanggan).data
+    }
 }

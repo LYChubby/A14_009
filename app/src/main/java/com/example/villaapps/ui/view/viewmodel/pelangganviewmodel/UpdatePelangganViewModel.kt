@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 
 data class UpdatePelangganUiState(
-    val updatePelangganUiEvent: UpdatePelangganUiEvent = UpdatePelangganUiEvent()
+    val updatePelangganUiEvent: UpdatePelangganUiEvent = UpdatePelangganUiEvent(),
 )
 
 data class UpdatePelangganUiEvent(

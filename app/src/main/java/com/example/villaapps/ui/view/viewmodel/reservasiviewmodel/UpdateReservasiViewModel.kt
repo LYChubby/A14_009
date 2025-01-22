@@ -14,7 +14,9 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 
 data class UpdateReservasiUiState (
-    val updateReservasiUiEvent: UpdateReservasiUiEvent = UpdateReservasiUiEvent()
+    val updateReservasiUiEvent: UpdateReservasiUiEvent = UpdateReservasiUiEvent(),
+    val daftarVilla: List<Pair<Int, String>> = emptyList(),
+    val daftarPelanggan: List<Pair<Int, String>> = emptyList(),
 )
 
 data class UpdateReservasiUiEvent (

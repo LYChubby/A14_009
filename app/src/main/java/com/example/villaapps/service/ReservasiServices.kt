@@ -1,6 +1,8 @@
 package com.example.villaapps.service
 
+import com.example.villaapps.model.AllPelangganResponse
 import com.example.villaapps.model.AllReservasiResponse
+import com.example.villaapps.model.DaftarVillaResponse
 import com.example.villaapps.model.DetailReservasiResponse
 import com.example.villaapps.model.Reservasi
 import retrofit2.Response
@@ -34,5 +36,10 @@ interface ReservasiServices {
     @DELETE("{idReservasi}")
     suspend fun deleteReservasi(@Path("idReservasi") idReservasi: Int): Response<Void>
 
+    @GET("villa")
+    suspend fun getDaftarVilla(): DaftarVillaResponse
+
+    @GET("pelanggan")
+    suspend fun getDaftarPelanggan(): AllPelangganResponse
 
 }

@@ -8,10 +8,15 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.villaapps.VillaApplications
+import com.example.villaapps.model.Reservasi
 import com.example.villaapps.ui.view.viewmodel.pelangganviewmodel.DetailPelangganViewModel
 import com.example.villaapps.ui.view.viewmodel.pelangganviewmodel.InsertPelangganViewModel
 import com.example.villaapps.ui.view.viewmodel.pelangganviewmodel.PelangganViewModel
 import com.example.villaapps.ui.view.viewmodel.pelangganviewmodel.UpdatePelangganViewModel
+import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.DetailReservasiViewModel
+import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.InsertReservasiViewModel
+import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.ReservasiViewModel
+import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.UpdateReservasiViewModel
 import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DaftarVillaViewModel
 import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DetailDaftarVillaViewModel
 import com.example.villaapps.ui.view.viewmodel.villaviewmodel.InsertDaftarVillaViewModel
@@ -52,6 +57,22 @@ object PenyediaViewModel {
         }
         initializer {
             UpdatePelangganViewModel(aplikasiReservasi().pelanggancontainer.pelangganRepository)
+        }
+
+        initializer {
+            ReservasiViewModel(aplikasiReservasi().reservasicontainer.reservasiRepository)
+        }
+        initializer {
+            InsertReservasiViewModel(aplikasiReservasi().reservasicontainer.reservasiRepository)
+        }
+        initializer {
+            DetailReservasiViewModel(
+                createSavedStateHandle(),
+                aplikasiReservasi().reservasicontainer.reservasiRepository
+            )
+        }
+        initializer {
+            UpdateReservasiViewModel(aplikasiReservasi().reservasicontainer.reservasiRepository)
         }
     }
 }

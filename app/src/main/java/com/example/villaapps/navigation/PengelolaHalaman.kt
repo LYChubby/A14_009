@@ -27,6 +27,7 @@ import com.example.villaapps.ui.view.pages.reservasiview.DestinasiUpdateReservas
 import com.example.villaapps.ui.view.pages.reservasiview.DetailReservasiView
 import com.example.villaapps.ui.view.pages.reservasiview.EntryReservasiScreen
 import com.example.villaapps.ui.view.pages.reservasiview.ReservasiScreen
+import com.example.villaapps.ui.view.pages.reservasiview.UpdateReservasiScreen
 import com.example.villaapps.ui.view.pages.villaview.DaftarVillaScreen
 import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla
 import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla.IDVILLA
@@ -226,6 +227,24 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                     onDeleteClick = {
                         navController.popBackStack()
                     }
+                )
+            }
+        }
+        composable(
+            DestinasiUpdateReservasi.routeWithArgs,
+            arguments = listOf(
+                navArgument(DestinasiUpdateReservasi.IDRESERVASI) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            val idReservasi = it.arguments?.getInt(DestinasiUpdateReservasi.IDRESERVASI)
+            idReservasi?.let { idReservasi ->
+                UpdateReservasiScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                    idReservasi = idReservasi
                 )
             }
         }

@@ -17,6 +17,10 @@ import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.DetailReservas
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.InsertReservasiViewModel
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.ReservasiViewModel
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.UpdateReservasiViewModel
+import com.example.villaapps.ui.view.viewmodel.reviewviewmodel.DetailReviewViewModel
+import com.example.villaapps.ui.view.viewmodel.reviewviewmodel.InsertReviewViewModel
+import com.example.villaapps.ui.view.viewmodel.reviewviewmodel.ReviewViewModel
+import com.example.villaapps.ui.view.viewmodel.reviewviewmodel.UpdateReviewViewModel
 import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DaftarVillaViewModel
 import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DetailDaftarVillaViewModel
 import com.example.villaapps.ui.view.viewmodel.villaviewmodel.InsertDaftarVillaViewModel
@@ -63,7 +67,11 @@ object PenyediaViewModel {
             ReservasiViewModel(aplikasiReservasi().reservasicontainer.reservasiRepository)
         }
         initializer {
-            InsertReservasiViewModel(aplikasiReservasi().reservasicontainer.reservasiRepository)
+            InsertReservasiViewModel(
+                aplikasiReservasi().reservasicontainer.reservasiRepository,
+                aplikasiReservasi().reservasicontainer.daftarVillaRepository,
+                aplikasiReservasi().reservasicontainer.pelangganRepository
+            )
         }
         initializer {
             DetailReservasiViewModel(
@@ -73,6 +81,22 @@ object PenyediaViewModel {
         }
         initializer {
             UpdateReservasiViewModel(aplikasiReservasi().reservasicontainer.reservasiRepository)
+        }
+
+        initializer {
+            ReviewViewModel(aplikasiReservasi().reviewcontainer.reviewRepository)
+        }
+        initializer {
+            InsertReviewViewModel(aplikasiReservasi().reviewcontainer.reviewRepository)
+        }
+        initializer {
+            DetailReviewViewModel(
+                createSavedStateHandle(),
+                aplikasiReservasi().reviewcontainer.reviewRepository
+            )
+        }
+        initializer {
+            UpdateReviewViewModel(aplikasiReservasi().reviewcontainer.reviewRepository)
         }
     }
 }

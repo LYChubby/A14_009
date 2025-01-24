@@ -43,8 +43,8 @@ class InsertReviewViewModel (
     var insertReviewuiState by mutableStateOf(InsertReviewUiState())
         private set
 
-    fun updateInsertReviewUiState(newInsertReviewUiEvent: InsertReviewUiEvent) {
-        insertReviewuiState = InsertReviewUiState(newInsertReviewUiEvent)
+    fun updateInsertReviewUiState(insertReviewUiEvent: InsertReviewUiEvent) {
+        insertReviewuiState = InsertReviewUiState(insertReviewUiEvent = insertReviewUiEvent)
     }
 
     suspend fun insertReview() {

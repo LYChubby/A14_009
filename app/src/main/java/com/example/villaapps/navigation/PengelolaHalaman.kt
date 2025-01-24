@@ -28,6 +28,14 @@ import com.example.villaapps.ui.view.pages.reservasiview.DetailReservasiView
 import com.example.villaapps.ui.view.pages.reservasiview.EntryReservasiScreen
 import com.example.villaapps.ui.view.pages.reservasiview.ReservasiScreen
 import com.example.villaapps.ui.view.pages.reservasiview.UpdateReservasiScreen
+import com.example.villaapps.ui.view.pages.reviewview.DestinasiDetailReview
+import com.example.villaapps.ui.view.pages.reviewview.DestinasiInsertReview
+import com.example.villaapps.ui.view.pages.reviewview.DestinasiReview
+import com.example.villaapps.ui.view.pages.reviewview.DestinasiUpdateReview
+import com.example.villaapps.ui.view.pages.reviewview.DetailReviewView
+import com.example.villaapps.ui.view.pages.reviewview.EntryReviewScreen
+import com.example.villaapps.ui.view.pages.reviewview.ReviewScreen
+import com.example.villaapps.ui.view.pages.reviewview.UpdateReviewScreen
 import com.example.villaapps.ui.view.pages.villaview.DaftarVillaScreen
 import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla
 import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla.IDVILLA
@@ -51,7 +59,7 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
             HomeView(
                 onDaftarVillaClick = { navController.navigate(DestinasiVilla.route) },
                 onDaftarPelangganClick = { navController.navigate(DestinasiPelanggan.route) },
-                onDaftarReviewClick = {  },
+                onDaftarReviewClick = { navController.navigate(DestinasiReview.route) },
                 onDaftarReservasiClick = { navController.navigate(DestinasiReservasi.route) }
             )
         }
@@ -245,6 +253,70 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                         navController.popBackStack()
                     },
                     idReservasi = idReservasi
+                )
+            }
+        }
+
+        composable(DestinasiReview.route) {
+            ReviewScreen(
+                navigateToitemEntry = { navController.navigate(DestinasiInsertReview.route) },
+                navigateBack = { navController.popBackStack() },
+                onDetailClick = { idReview ->
+                    navController.navigate("${DestinasiDetailReview.route}/$idReview")
+                    println(
+                        "PengelolaHalaman: ID Reservasi = $idReview"
+                    )
+                }
+            )
+        }
+        composable(DestinasiInsertReview.route) {
+            EntryReviewScreen(navigateBack = {
+                navController.navigate(DestinasiReview.route) {
+                    popUpTo(DestinasiReview.route) {
+                        inclusive = true
+                    }
+                }
+            })
+        }
+        composable(
+            DestinasiDetailReview.routeWithArgs,
+            arguments = listOf(
+                navArgument(DestinasiDetailReview.IDREVIEW) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            val idReview = it.arguments?.getInt(DestinasiDetailReview.IDREVIEW)
+            idReview?.let { idReview ->
+                DetailReviewView(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                    onEditClick = {
+                        navController.navigate("${DestinasiUpdateReview.route}/$it")
+                    },
+                    idReview = idReview,
+                    onDeleteClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+        }
+        composable(
+            DestinasiUpdateReview.routeWithArgs,
+            arguments = listOf(
+                navArgument(DestinasiUpdateReview.IDREVIEW) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            val idReview = it.arguments?.getInt(DestinasiUpdateReview.IDREVIEW)
+            idReview?.let { idReview ->
+                UpdateReviewScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                    idReview = idReview
                 )
             }
         }

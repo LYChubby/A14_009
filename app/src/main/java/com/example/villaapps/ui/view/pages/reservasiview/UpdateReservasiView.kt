@@ -24,8 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.villaapps.navigation.DestinasiNavigasi
 import com.example.villaapps.ui.customwidget.CostumeTopAppBar
-import com.example.villaapps.ui.customwidget.DynamicSelectedPelanggan
-import com.example.villaapps.ui.customwidget.DynamicSelectedVilla
+import com.example.villaapps.ui.customwidget.DynamicSelectedView
 import com.example.villaapps.ui.view.viewmodel.PenyediaViewModel
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.UpdateReservasiUiEvent
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.UpdateReservasiUiState
@@ -55,7 +54,7 @@ fun UpdateFormInputReservasi(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        DynamicSelectedVilla(
+        DynamicSelectedView(
             selectedValue = updateReservasiUiEvent.idVilla.toString(),
             options = daftarVilla.map { it.second },
             label = "Pilih Villa",
@@ -68,7 +67,7 @@ fun UpdateFormInputReservasi(
             }
         )
 
-        DynamicSelectedPelanggan(
+        DynamicSelectedView(
             selectedValue = updateReservasiUiEvent.idPelanggan.toString(),
             options = daftarPelanggan.map { it.second },
             label = "Nama Pelanggan",

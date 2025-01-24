@@ -1,6 +1,7 @@
 package com.example.villaapps.ui.view.pages.reservasiview
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,8 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.villaapps.navigation.DestinasiNavigasi
 import com.example.villaapps.ui.customwidget.CostumeTopAppBar
-import com.example.villaapps.ui.customwidget.DynamicSelectedPelanggan
-import com.example.villaapps.ui.customwidget.DynamicSelectedVilla
+import com.example.villaapps.ui.customwidget.DynamicSelectedView
 import com.example.villaapps.ui.view.viewmodel.PenyediaViewModel
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.InsertReservasiUiEvent
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.InsertReservasiUiState
@@ -33,8 +33,8 @@ import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.InsertReservas
 import kotlinx.coroutines.launch
 
 object DestinasiInsertReservasi: DestinasiNavigasi {
-    override val route = "Item_Entry"
-    override val titleRes = "Entry Mhs"
+    override val route = "Entry_Reservasi"
+    override val titleRes = "Reservasi"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,12 +54,17 @@ fun FormInputReservasi(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
-        DynamicSelectedVilla(
-            selectedValue = insertReservasiUiEvent.idVilla.toString(),
+        DynamicSelectedView(
+            selectedValue = daftarVilla.firstOrNull { it.first == insertReservasiUiEvent.idVilla }?.second ?: "Pilih Villa",
             options = daftarVilla.map { it.second },
             label = "Pilih Villa",
             onValueChangedEvent = { selectedVilla ->
                 val idVilla = daftarVilla.firstOrNull { it.second == selectedVilla }?.first
+                if (idVilla == null) {
+                    Log.d("Debug", "Villa dengan nama $selectedVilla tidak ditemukan dalam daftar.")
+                } else {
+                    Log.d("Debug", "Villa yang dipilih: $selectedVilla dengan ID: $idVilla")
+                }
                 idVilla?.let {
                     onValueChange(insertReservasiUiEvent.copy(idVilla = it))
                     onVillaSelected(it)
@@ -67,8 +72,8 @@ fun FormInputReservasi(
             }
         )
 
-        DynamicSelectedPelanggan(
-            selectedValue = insertReservasiUiEvent.idPelanggan.toString(),
+        DynamicSelectedView(
+            selectedValue = daftarPelanggan.firstOrNull { it.first == insertReservasiUiEvent.idPelanggan }?.second ?: "Pilih Pelanggan",
             options = daftarPelanggan.map { it.second },
             label = "Nama Pelanggan",
             onValueChangedEvent = { selectedPelanggan ->

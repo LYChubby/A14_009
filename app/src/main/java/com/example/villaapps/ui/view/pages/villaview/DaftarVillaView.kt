@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,15 +28,21 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.villaapps.model.DaftarVilla
+import com.example.villaapps.model.Pelanggan
 import com.example.villaapps.navigation.DestinasiNavigasi
 import com.example.villaapps.ui.customwidget.CostumeTopAppBar
 import com.example.villaapps.ui.view.viewmodel.PenyediaViewModel
@@ -45,6 +52,30 @@ import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DaftarVillaViewMod
 object DestinasiVilla : DestinasiNavigasi {
     override val route = "daftar_villa"
     override val titleRes = "Daftar Villa"
+}
+
+@Composable
+private fun DeleteConfirmationDialog(
+    onDeleteConfirm: () -> Unit,
+    onDeleteCancel: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AlertDialog(
+        onDismissRequest = { },
+        title = { Text("Delete Data") },
+        text = { Text("Apakah Anda Yakin Ingin Menghapus Data Ini?") },
+        modifier = modifier,
+        dismissButton = {
+            TextButton(onClick = onDeleteCancel) {
+                Text(text = "Cancel")
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDeleteConfirm) {
+                Text(text = "Yes")
+            }
+        }
+    )
 }
 
 @Composable
@@ -152,6 +183,7 @@ fun DaftarVillaStatus(
     onDetailClick: (String) -> Unit,
     onDeleteClick: (DaftarVilla) -> Unit = {},
 ){
+    var deleteConfirmationVilla by remember { mutableStateOf<DaftarVilla?>(null) }
     when (daftarVillaUiState) {
         is DaftarVillaUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
 
@@ -167,10 +199,22 @@ fun DaftarVillaStatus(
                     onDetailClick = {
                         onDetailClick(it.idVilla.toString())
                     },
-                    onDeleteClick = {
-                        onDeleteClick(it)
-                    }
+                    onDeleteClick = { villa ->
+                        deleteConfirmationVilla = villa
+                    },
                 )
+
+                deleteConfirmationVilla?.let { villaToDelete ->
+                    DeleteConfirmationDialog(
+                        onDeleteConfirm = {
+                            onDeleteClick(villaToDelete)
+                            deleteConfirmationVilla= null
+                        },
+                        onDeleteCancel = {
+                            deleteConfirmationVilla = null
+                        }
+                    )
+                }
             }
         is DaftarVillaUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
     }

@@ -1,5 +1,6 @@
 package com.example.villaapps.ui.view.viewmodel.villaviewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -50,8 +51,9 @@ class InsertDaftarVillaViewModel (
     init {
         viewModelScope.launch {
             try {
-                val response = daftarVillaRepository.getAllVilla()
-                _daftarVilla.value = response.data.map { it.idVilla to it.namaVilla }
+                val villaData = daftarVillaRepository.getAllVilla().data
+                _daftarVilla.value = villaData.map { it.idVilla to it.namaVilla }
+                Log.d("InsertReservasiViewModel", "Fetched Villa Data: $villaData")
             } catch (e: Exception) {
                 _daftarVilla.value = emptyList()
             }

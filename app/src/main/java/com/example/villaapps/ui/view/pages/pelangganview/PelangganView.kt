@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,8 +30,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -48,6 +55,30 @@ import com.example.villaapps.ui.view.viewmodel.pelangganviewmodel.PelangganViewM
 object DestinasiPelanggan : DestinasiNavigasi {
     override val route = "pelanggan"
     override val titleRes = "Daftar Pelanggan"
+}
+
+@Composable
+private fun DeleteConfirmationDialog(
+    onDeleteConfirm: () -> Unit,
+    onDeleteCancel: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AlertDialog(
+        onDismissRequest = { },
+        title = { Text("Delete Data") },
+        text = { Text("Apakah Anda Yakin Ingin Menghapus Data Ini?") },
+        modifier = modifier,
+        dismissButton = {
+            TextButton(onClick = onDeleteCancel) {
+                Text(text = "Cancel")
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDeleteConfirm) {
+                Text(text = "Yes")
+            }
+        }
+    )
 }
 
 @Composable
@@ -102,14 +133,14 @@ fun PelangganLayout(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(pelanggan) { pelanggan ->
+        items(pelanggan) { pelangganList ->
             PelangganCard(
-                pelanggan = pelanggan,
+                pelanggan = pelangganList,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onDetailClick(pelanggan) },
+                    .clickable { onDetailClick(pelangganList) },
                 onDeleteClick = {
-                    onDeleteClick(pelanggan)
+                    onDeleteClick(pelangganList)
                 }
             )
         }
@@ -151,26 +182,43 @@ fun PelangganStatus(
     onDetailClick: (String) -> Unit,
     onDeleteClick: (Pelanggan) -> Unit = {},
 ){
+    var deleteConfirmationPelanggan by remember { mutableStateOf<Pelanggan?>(null) }
+
     when (pelangganUiState) {
         is PelangganUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
 
         is PelangganUiState.Success ->
             if (pelangganUiState.pelanggan.isEmpty()) {
-                return Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = "Tidak ada data Kontak")
                 }
             } else {
-                PelangganLayout(
-                    pelanggan = pelangganUiState.pelanggan,
-                    modifier = modifier.fillMaxWidth(),
-                    onDetailClick = {
-                        onDetailClick(it.idPelanggan.toString())
-                    },
-                    onDeleteClick = {
-                        onDeleteClick(it)
+                Column {
+                    PelangganLayout(
+                        pelanggan = pelangganUiState.pelanggan,
+                        modifier = modifier.fillMaxWidth(),
+                        onDetailClick = {
+                            onDetailClick(it.idPelanggan.toString())
+                        },
+                        onDeleteClick = { pelanggan ->
+                            deleteConfirmationPelanggan = pelanggan
+                        },
+                    )
+
+                    deleteConfirmationPelanggan?.let { pelangganToDelete ->
+                        DeleteConfirmationDialog(
+                            onDeleteConfirm = {
+                                onDeleteClick(pelangganToDelete)
+                                deleteConfirmationPelanggan = null
+                            },
+                            onDeleteCancel = {
+                                deleteConfirmationPelanggan = null
+                            }
+                        )
                     }
-                )
+                }
             }
+
         is PelangganUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
     }
 }

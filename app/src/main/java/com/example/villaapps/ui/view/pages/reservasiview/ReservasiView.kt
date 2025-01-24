@@ -50,8 +50,8 @@ import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.ReservasiUiSta
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.ReservasiViewModel
 
 object DestinasiReservasi : DestinasiNavigasi {
-    override val route = "home"
-    override val titleRes = "Home Mhs"
+    override val route = "reservasi"
+    override val titleRes = "Daftar Reservasi"
 }
 
 @Composable
@@ -178,7 +178,7 @@ fun ReservasiStatus(
         is ReservasiUiState.Success ->
             if (reservasiUiState.resrvasi.isEmpty()) {
                 return Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "Tidak ada data Kontak")
+                    Text(text = "Tidak Ada Reservasi")
                 }
             } else {
                 ReservasiLayout(

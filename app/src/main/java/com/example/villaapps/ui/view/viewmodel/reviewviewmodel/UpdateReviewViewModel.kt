@@ -49,7 +49,7 @@ class UpdateReviewViewModel (
     var UpdateReviewUiState by mutableStateOf(UpdateReviewUiState())
         private set
 
-    fun updateUpdateReviewUiState(updateReviewUiEvent: UpdateReviewUiEvent) {
+    fun updateReviewState(updateReviewUiEvent: UpdateReviewUiEvent) {
         UpdateReviewUiState = UpdateReviewUiState(updateReviewUiEvent = updateReviewUiEvent)
     }
 

@@ -2,6 +2,7 @@ package com.example.villaapps.ui.view.viewmodel.reservasiviewmodel
 
 import android.net.http.HttpException
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -74,15 +75,19 @@ class ReservasiViewModel(
         viewModelScope.launch {
             reservasiUiState = ReservasiUiState.Loading
             reservasiUiState = try {
-                ReservasiUiState.Success(reservasiRepository.getAllReservasi().data)
-            } catch (e: IOException) {
-                ReservasiUiState.Error
-            } catch (e: HttpException) {
+                val response = reservasiRepository.getAllReservasi()
+                Log.d("ReservasiViewModel", "Data reservasi: ${response.data}")
+                if (response.status) {
+                    ReservasiUiState.Success(response.data)
+                } else {
+                    ReservasiUiState.Error
+                }
+            } catch (e: Exception) {
+                Log.e("ReservasiViewModel", "Error: ${e.message}")
                 ReservasiUiState.Error
             }
         }
     }
-
     fun deleteReservasi(idReservasi: Int) {
         viewModelScope.launch {
             try {

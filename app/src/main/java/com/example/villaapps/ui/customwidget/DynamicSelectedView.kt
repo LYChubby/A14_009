@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DynamicSelectedVilla(
+fun DynamicSelectedView(
     modifier: Modifier = Modifier,
     selectedValue: String,
     options: List<String>,

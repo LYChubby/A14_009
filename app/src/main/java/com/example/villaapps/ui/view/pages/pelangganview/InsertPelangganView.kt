@@ -61,7 +61,7 @@ fun FormInputPelanggan(
         OutlinedTextField(
             value = insertPelangganUiEvent.noHp,
             onValueChange = { onValueChange(insertPelangganUiEvent.copy(noHp = it)) },
-            label = { Text(text = "NIM") },
+            label = { Text(text = "No Hp") },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             enabled = enabled,

@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.villaapps.model.Review
 import com.example.villaapps.repository.ReviewRepository
+import com.example.villaapps.ui.view.pages.reviewview.DestinasiDetailReview
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -50,7 +51,7 @@ class DetailReviewViewModel (
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    fun deleteReview() {
+    fun deleteReview(idReview: Int) {
         viewModelScope.launch {
             try {
                 reviewRepository.deleteReview(idReview)

@@ -1,5 +1,6 @@
 package com.example.villaapps.ui.view.viewmodel.reservasiviewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.villaapps.model.DaftarVilla
 import com.example.villaapps.model.Reservasi
+import com.example.villaapps.repository.DaftarVillaRepository
+import com.example.villaapps.repository.PelangganRepository
 import com.example.villaapps.repository.ReservasiRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -48,25 +51,57 @@ fun Reservasi.toInsertReservasiUiEvent(): InsertReservasiUiEvent = InsertReserva
     checkOut = checkOut,
 )
 
-class InsertReservasiViewModel (
-    private val reservasiRepository: ReservasiRepository
-): ViewModel() {
-
+class InsertReservasiViewModel(
+    private val reservasiRepository: ReservasiRepository,
+    private val daftarVillaRepository: DaftarVillaRepository,
+    private val pelangganRepository: PelangganRepository
+) : ViewModel() {
 
     var insertReservasiUiState by mutableStateOf(InsertReservasiUiState())
         private set
 
+    init {
+        fetchDaftarVilla()
+        fetchDaftarPelanggan()
+    }
+
+    private fun fetchDaftarVilla() {
+        viewModelScope.launch {
+            try {
+                val villaData = daftarVillaRepository.getAllVilla().data
+                insertReservasiUiState = insertReservasiUiState.copy(
+                    daftarVilla = villaData.map { it.idVilla to it.namaVilla }
+                )
+            } catch (e: Exception) {
+                insertReservasiUiState = insertReservasiUiState.copy(daftarVilla = emptyList())
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun fetchDaftarPelanggan() {
+        viewModelScope.launch {
+            try {
+                val pelangganData = pelangganRepository.getAllPelanggan().data
+                insertReservasiUiState = insertReservasiUiState.copy(
+                    daftarPelanggan = pelangganData.map { it.idPelanggan to it.namaPelanggan }
+                )
+            } catch (e: Exception) {
+                insertReservasiUiState = insertReservasiUiState.copy(daftarPelanggan = emptyList())
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun updateInsertReservasiUiState(insertReservasiUiEvent: InsertReservasiUiEvent) {
-        insertReservasiUiState = InsertReservasiUiState(insertReservasiUiEvent = insertReservasiUiEvent)
+        insertReservasiUiState = insertReservasiUiState.copy(insertReservasiUiEvent = insertReservasiUiEvent)
     }
 
     suspend fun insertReservasi() {
-        viewModelScope.launch {
-            try {
-                reservasiRepository.insertReservasi(insertReservasiUiState.insertReservasiUiEvent.toReservasi())
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        try {
+            reservasiRepository.insertReservasi(insertReservasiUiState.insertReservasiUiEvent.toReservasi())
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

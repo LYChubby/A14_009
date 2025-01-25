@@ -102,6 +102,11 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                     onEditClick = {
                         navController.navigate("${DestinasiUpdateVilla.route}/$it")
                     },
+                    onReservasiClick = {
+                        navController.navigate(DestinasiInsertReservasi.route) {
+                            launchSingleTop = true
+                        }
+                    },
                     idVilla = idVilla,
                     onDeleteClick = {
                         navController.popBackStack()
@@ -207,11 +212,7 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         }
         composable(DestinasiInsertReservasi.route) {
             EntryReservasiScreen(navigateBack = {
-                navController.navigate(DestinasiReservasi.route) {
-                    popUpTo(DestinasiReservasi.route) {
-                        inclusive = true
-                    }
-                }
+                navController.popBackStack()
             })
         }
         composable(
@@ -258,12 +259,12 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         }
 
         composable(DestinasiReview.route) {
-            ReviewScreen(
+           ReviewScreen(
                 navigateToitemEntry = { navController.navigate(DestinasiInsertReview.route) },
                 navigateBack = { navController.popBackStack() },
                 onDetailClick = { idReview ->
                     navController.navigate("${DestinasiDetailReview.route}/$idReview")
-                    println(
+                   println(
                         "PengelolaHalaman: ID Reservasi = $idReview"
                     )
                 }

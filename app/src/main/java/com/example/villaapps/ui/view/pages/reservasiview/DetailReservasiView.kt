@@ -2,16 +2,31 @@ package com.example.villaapps.ui.view.pages.reservasiview
 
 import android.os.Build
 import androidx.annotation.RequiresExtension
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Hotel
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Villa
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,9 +57,11 @@ import com.example.villaapps.model.Pelanggan
 import com.example.villaapps.model.Reservasi
 import com.example.villaapps.navigation.DestinasiNavigasi
 import com.example.villaapps.ui.customwidget.CostumeTopAppBar
+import com.example.villaapps.ui.view.pages.villaview.ItemDetailVilla
 import com.example.villaapps.ui.view.viewmodel.PenyediaViewModel
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.DetailReservasiUiState
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.DetailReservasiViewModel
+import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DetailDaftarVillaUiState
 
 object DestinasiDetailReservasi: DestinasiNavigasi {
     override val route = "detail_reservasi"
@@ -61,91 +78,146 @@ private fun DeleteConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = { },
-        title = { Text("Delete Data") },
+        title = { Text("Delete Data", color = Color.Red) },
         text = { Text("Apakah Anda Yakin Ingin Menghapus Data Ini?") },
         modifier = modifier,
-        dismissButton = {
-            TextButton(onClick = onDeleteCancel) {
-                Text(text = "Cancel")
+        confirmButton = {
+            TextButton(
+                onClick = onDeleteConfirm,
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+                Text(text = "Yes")
             }
         },
-        confirmButton = {
-            TextButton(onClick = onDeleteConfirm) {
-                Text(text = "Yes")
+        dismissButton = {
+            TextButton(
+                onClick = onDeleteCancel
+            ) {
+                Text(text = "Cancel")
             }
         }
     )
 }
 
 @Composable
-fun ComponentDetailReservasi(
-    modifier: Modifier = Modifier,
-    judul: String,
-    isinya: String
-) {
-    Column (
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.Start
-    ){
-        Text(
-            text = "$judul : ",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Gray
-        )
-
-        Text(
-            text = isinya,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-        )
-    }
-}
-
-@Composable
 fun ItemDetailReservasi(
     modifier: Modifier = Modifier,
     reservasi: Reservasi,
-    daftarVilla: DaftarVilla,
-    pelanggan: Pelanggan
 ) {
-    Card (
+    Column(
         modifier = modifier
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        )
+            .fillMaxWidth()
+            .background(Color.White)
     ) {
-        Column (
-            modifier = Modifier.padding(16.dp)
-        ){
-            ComponentDetailReservasi(judul = "Nama", isinya = pelanggan.namaPelanggan)
-            Spacer(modifier = Modifier.padding(4.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .background(Color(0xFFF0F0F0)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Hotel,
+                contentDescription = "Reservasi",
+                modifier = Modifier.size(120.dp),
+                tint = Color.Gray
+            )
+        }
 
-            ComponentDetailReservasi(judul = "Villa", isinya = daftarVilla.namaVilla)
-            Spacer(modifier = Modifier.padding(4.dp))
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = "Nama Pelanggan : ${reservasi.idPelanggan}",
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
 
-            ComponentDetailReservasi(judul = "Check In", isinya = reservasi.checkIn)
-            Spacer(modifier = Modifier.padding(4.dp))
+            AssistChip(
+                onClick = {},
+                label = {
+                    Text(
+                        "${reservasi.jumlahKamar} Kamar",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Hotel,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                },
+                colors = AssistChipDefaults.assistChipColors(
+                    containerColor = Color(0xFFF0F0F0),
+                    labelColor = Color.Black
+                )
+            )
 
-            ComponentDetailReservasi(judul = "Check Out", isinya = reservasi.checkOut)
-            Spacer(modifier = Modifier.padding(4.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CalendarToday,
+                    contentDescription = "Check In",
+                    tint = Color(0xFF4CAF50),
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text(
+                    text = "Check In : ${reservasi.checkIn}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Gray
+                )
+            }
 
-            ComponentDetailReservasi(judul = "Jumlah Kamar", isinya = reservasi.jumlahKamar.toString())
-            Spacer(modifier = Modifier.padding(4.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CalendarToday,
+                    contentDescription = "Check Out",
+                    tint = Color(0xFF4CAF50),
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text(
+                    text = "Check In : ${reservasi.checkOut}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Gray
+                )
+            }
 
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = "Location",
+                    tint = Color(0xFF4CAF50),
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text(
+                    text = "Nama Villa : ${reservasi.idVilla}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Gray
+                )
+            }
         }
     }
 }
 
 @Composable
-fun BodyDetailMhs(
+fun BodyDetailReservasi(
     modifier: Modifier = Modifier,
     detailReservasiUiState: DetailReservasiUiState,
     onDeleteClick: () -> Unit = { }
 ) {
-    var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
+    var deleteConfirmationReservasi by rememberSaveable { mutableStateOf(false) }
 
     when (detailReservasiUiState) {
         is DetailReservasiUiState.Loading -> {
@@ -153,47 +225,69 @@ fun BodyDetailMhs(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = Color(0xFF2196F3),
+                    strokeWidth = 3.dp
+                )
             }
         }
         is DetailReservasiUiState.Success -> {
             Column(
-                modifier = modifier.fillMaxWidth().padding(16.dp)
+                modifier = modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFFF5F5F5))
             ) {
                 ItemDetailReservasi(
                     reservasi = detailReservasiUiState.reservasi,
-                    daftarVilla = detailReservasiUiState.villa,
-                    pelanggan = detailReservasiUiState.pelanggan,
                     modifier = Modifier
                 )
-                Spacer(modifier = Modifier.padding(8.dp))
+
                 Button(
-                    onClick = { deleteConfirmationRequired = true },
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = { deleteConfirmationReservasi = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFF5252)
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(text = "Delete")
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        text = "Hapus Reservasi",
+                        color = Color.White
+                    )
                 }
 
-                if (deleteConfirmationRequired) {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (deleteConfirmationReservasi) {
                     DeleteConfirmationDialog(
                         onDeleteConfirm = {
-                            deleteConfirmationRequired = false
+                            deleteConfirmationReservasi = false
                             onDeleteClick()
                         },
-                        onDeleteCancel = { deleteConfirmationRequired = false },
-                        modifier = Modifier.padding(8.dp)
+                        onDeleteCancel = { deleteConfirmationReservasi= false }
                     )
                 }
             }
         }
         is DetailReservasiUiState.Error -> {
             Box(
-                modifier = modifier.fillMaxSize(),
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color(0xFFF5F5F5)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "Data Tidak Ditemukan",
-                    modifier = Modifier.padding(16.dp)
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color(0xFFFF5252)
                 )
             }
         }
@@ -232,17 +326,15 @@ fun DetailReservasiView(
             FloatingActionButton(
                 onClick = { onEditClick(idReservasi.toString()) },
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
+                containerColor = Color(0xFF2196F3)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit Mahasiswa"
-                )
+                Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Reservasi", tint = Color.White)
             }
         }
     ) { innerPadding ->
 
-        BodyDetailMhs(
+        BodyDetailReservasi(
             modifier = modifier.padding(innerPadding),
             detailReservasiUiState = viewModel.detailReservasiUiState,
             onDeleteClick = {

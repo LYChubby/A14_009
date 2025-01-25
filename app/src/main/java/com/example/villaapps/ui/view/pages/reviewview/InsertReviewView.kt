@@ -2,23 +2,35 @@ package com.example.villaapps.ui.view.pages.reviewview
 
 import android.os.Build
 import androidx.annotation.RequiresExtension
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Comment
+import androidx.compose.material.icons.filled.Grade
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,32 +57,61 @@ fun FormInputReview(
     enabled: Boolean = true
 ) {
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = modifier
+            .background(Color.White)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         DynamicSelectedView(
             selectedValue = insertReviewUiEvent.nilai,
             options = listOf("Sangat Puas", "Puas", "Biasa", "Tidak Puas", "Sangat Tidak Puas"),
             label = "Nilai Kepuasan",
-            onValueChangedEvent = { onValueChange(insertReviewUiEvent.copy(nilai = it)) }
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Grade,
+                    contentDescription = null,
+                    tint = Color(0xFFFF9800)
+                )
+            },
+            onValueChangedEvent = { selectedValue ->
+                onValueChange(insertReviewUiEvent.copy(nilai = selectedValue))
+            },
+            modifier = Modifier.fillMaxWidth()
         )
-        OutlinedTextField(
+
+        TextField(
             value = insertReviewUiEvent.komentar,
             onValueChange = { onValueChange(insertReviewUiEvent.copy(komentar = it)) },
-            label = { Text(text = "Komentar") },
-            modifier = Modifier.fillMaxWidth(),
+            label = { Text("Komentar") },
             enabled = enabled,
-            singleLine = true
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Comment,
+                    contentDescription = "Komentar",
+                    tint = Color(0xFFFF9800)
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.White,
+                focusedIndicatorColor = Color(0xFF2196F3),
+                unfocusedIndicatorColor = Color.Gray
+            ),
+            shape = RoundedCornerShape(12.dp)
         )
+
         if (enabled) {
             Text(
                 text = "Isi Semua Data !!!",
-                modifier = Modifier.padding(12.dp)
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 8.dp)
             )
         }
+
         Divider(
             thickness = 8.dp,
-            modifier = Modifier.padding(12.dp)
+            color = Color(0xFFEEEEEE),
+            modifier = Modifier.padding(vertical = 16.dp)
         )
     }
 }
@@ -93,9 +134,19 @@ fun EntryBodyReview(
         )
         Button(
             onClick = onSaveClick,
-            shape = MaterialTheme.shapes.small,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF2196F3)
+            ),
+            shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "Simpan")
+            Text(
+                text = "Simpan Review",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.White
+            )
         }
     }
 }

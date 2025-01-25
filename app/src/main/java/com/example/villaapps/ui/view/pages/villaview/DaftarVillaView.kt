@@ -2,6 +2,7 @@ package com.example.villaapps.ui.view.pages.villaview
 
 import android.os.Build
 import androidx.annotation.RequiresExtension
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,14 +12,26 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Hotel
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Villa
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,7 +51,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.villaapps.model.DaftarVilla
@@ -62,17 +78,22 @@ private fun DeleteConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = { },
-        title = { Text("Delete Data") },
+        title = { Text("Delete Data", color = Color.Red) },
         text = { Text("Apakah Anda Yakin Ingin Menghapus Data Ini?") },
         modifier = modifier,
-        dismissButton = {
-            TextButton(onClick = onDeleteCancel) {
-                Text(text = "Cancel")
+        confirmButton = {
+            TextButton(
+                onClick = onDeleteConfirm,
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+                Text(text = "Yes")
             }
         },
-        confirmButton = {
-            TextButton(onClick = onDeleteConfirm) {
-                Text(text = "Yes")
+        dismissButton = {
+            TextButton(
+                onClick = onDeleteCancel
+            ) {
+                Text(text = "Cancel")
             }
         }
     )
@@ -84,40 +105,103 @@ fun DaftarVillaCard(
     modifier: Modifier = Modifier,
     onDeleteClick: (DaftarVilla) -> Unit,
 ) {
-    Card (
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ){
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD))
+    ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFFF0F0F0)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Villa,
+                    contentDescription = "Villa Image",
+                    modifier = Modifier.size(80.dp),
+                    tint = Color.Gray
+                )
+            }
+
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = daftarVilla.namaVilla,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = daftarVilla.kamarTersedia.toString() + "\nkamar tersedia",
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
                 )
                 IconButton(
-                    onClick = { onDeleteClick(daftarVilla) }) {
+                    onClick = { onDeleteClick(daftarVilla) },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(
+                            Color(0xFFFF5252).copy(alpha = 0.1f),
+                            shape = CircleShape
+                        )
+                ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = null
+                        contentDescription = "Delete Villa",
+                        tint = Color(0xFFFF5252)
                     )
                 }
             }
-            Text(
-                text = daftarVilla.alamat,
-                style = MaterialTheme.typography.titleMedium
+
+            AssistChip(
+                onClick = {},
+                label = {
+                    Text(
+                        "${daftarVilla.kamarTersedia} Kamar Tersedia",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Hotel,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                },
+                colors = AssistChipDefaults.assistChipColors(
+                    containerColor = Color(0xFFF0F0F0),
+                    labelColor = Color.Black
+                ),
+                modifier = Modifier.padding(top = 8.dp)
             )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = "Location",
+                    tint = Color(0xFF4CAF50)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = daftarVilla.alamat,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+            }
         }
     }
 }
@@ -140,9 +224,7 @@ fun DaftarVillaLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onDetailClick(villa) },
-                onDeleteClick = {
-                    onDeleteClick(villa)
-                }
+                onDeleteClick = onDeleteClick
             )
         }
     }
@@ -229,13 +311,14 @@ fun DaftarVillaScreen(
     modifier: Modifier = Modifier,
     onDetailClick: (String) -> Unit = {},
     viewModel: DaftarVillaViewModel = viewModel(factory = PenyediaViewModel.Factory)
-){
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CostumeTopAppBar(
-                title = DestinasiVilla.titleRes,
+                title = "Daftar Villa",
                 canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 navigateUp = navigateBack,
@@ -248,20 +331,19 @@ fun DaftarVillaScreen(
             FloatingActionButton(
                 onClick = navigateToitemEntry,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp)
-            ){
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Villa")
+                modifier = Modifier.padding(16.dp),
+                containerColor = Color(0xFF2196F3)
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Villa", tint = Color.White)
             }
-        },
-    ){ innerPadding ->
+        }
+    ) { innerPadding ->
         DaftarVillaStatus(
             daftarVillaUiState = viewModel.daftarVillaUiState,
             retryAction = { viewModel.getDaftarVilla() },
             modifier = Modifier.padding(innerPadding),
-            onDetailClick = onDetailClick, onDeleteClick = {
-                viewModel.deleteDaftarVilla(it.idVilla)
-                viewModel.getDaftarVilla()
-            }
+            onDetailClick = onDetailClick,
+            onDeleteClick = { viewModel.deleteDaftarVilla(it.idVilla) }
         )
     }
 }

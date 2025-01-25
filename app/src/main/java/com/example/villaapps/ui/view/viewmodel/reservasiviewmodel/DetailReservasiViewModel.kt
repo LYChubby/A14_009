@@ -20,8 +20,6 @@ import java.io.IOException
 sealed class DetailReservasiUiState {
     data class Success(
         val reservasi: Reservasi,
-        val villa: DaftarVilla,
-        val pelanggan: Pelanggan
     ) : DetailReservasiUiState()
     object Error : DetailReservasiUiState()
     object Loading : DetailReservasiUiState()
@@ -46,17 +44,8 @@ class DetailReservasiViewModel (
         viewModelScope.launch {
             detailReservasiUiState = DetailReservasiUiState.Loading
             detailReservasiUiState = try {
-                val reservasi = reservasiRepository.getReservasiById(idReservasi)
-
-                val daftarVilla = reservasiRepository.getDaftarVilla().data
-                val daftarPelanggan = reservasiRepository.getDaftarPelanggan().data
-
-                val villa = daftarVilla.firstOrNull { it.idVilla == reservasi.idVilla }
-                    ?: throw Exception("Villa not found")
-                val pelanggan = daftarPelanggan.firstOrNull { it.idPelanggan == reservasi.idPelanggan }
-                    ?: throw Exception("Pelanggan not found")
-
-                DetailReservasiUiState.Success(reservasi, villa, pelanggan)
+              val reservasi = reservasiRepository.getReservasiById(idReservasi)
+                DetailReservasiUiState.Success(reservasi)
             } catch (e: IOException) {
                 DetailReservasiUiState.Error
             } catch (e: HttpException) {

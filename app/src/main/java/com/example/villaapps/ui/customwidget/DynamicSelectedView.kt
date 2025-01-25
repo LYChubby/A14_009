@@ -20,6 +20,7 @@ fun DynamicSelectedView(
     modifier: Modifier = Modifier,
     selectedValue: String,
     options: List<String>,
+    leadingIcon: @Composable (() -> Unit)? = null,
     label: String,
     onValueChangedEvent: (String) -> Unit,
 ) {
@@ -35,6 +36,7 @@ fun DynamicSelectedView(
             value = selectedValue,
             onValueChange = {},
             label = { Text(text = label) },
+            leadingIcon = leadingIcon,
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },

@@ -2,7 +2,7 @@ package com.example.villaapps.ui.view.pages.pelangganview
 
 import android.os.Build
 import androidx.annotation.RequiresExtension
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,13 +14,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,13 +42,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.villaapps.model.Pelanggan
@@ -65,17 +70,22 @@ private fun DeleteConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = { },
-        title = { Text("Delete Data") },
+        title = { Text("Delete Data", color = Color.Red) },
         text = { Text("Apakah Anda Yakin Ingin Menghapus Data Ini?") },
         modifier = modifier,
-        dismissButton = {
-            TextButton(onClick = onDeleteCancel) {
-                Text(text = "Cancel")
+        confirmButton = {
+            TextButton(
+                onClick = onDeleteConfirm,
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+                Text(text = "Yes")
             }
         },
-        confirmButton = {
-            TextButton(onClick = onDeleteConfirm) {
-                Text(text = "Yes")
+        dismissButton = {
+            TextButton(
+                onClick = onDeleteCancel
+            ) {
+                Text(text = "Cancel")
             }
         }
     )
@@ -85,38 +95,75 @@ private fun DeleteConfirmationDialog(
 fun PelangganCard(
     pelanggan: Pelanggan,
     modifier: Modifier = Modifier,
-    onDeleteClick: (Pelanggan) -> Unit = {}
+    onDeleteClick: (Pelanggan) -> Unit,
 ) {
-    Card (
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ){
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F5E9))
+    ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
             ) {
-                Text(
-                    text = pelanggan.namaPelanggan,
-                    style = MaterialTheme.typography.titleLarge
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Pelanggan Image",
+                    modifier = Modifier.size(40.dp),
+                    tint = Color.Gray
                 )
-                Spacer(modifier = Modifier.weight(1f))
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = pelanggan.namaPelanggan,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = "Phone",
+                            tint = Color(0xFF4CAF50),
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = pelanggan.noHp,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray
+                        )
+                    }
+                }
                 IconButton(
-                    onClick = { onDeleteClick(pelanggan) }) {
+                    onClick = { onDeleteClick(pelanggan) },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(
+                            Color(0xFFFF5252).copy(alpha = 0.1f),
+                            shape = CircleShape
+                        )
+                ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = null
+                        contentDescription = "Delete Pelanggan",
+                        tint = Color(0xFFFF5252)
                     )
                 }
             }
-            Text(
-                text = pelanggan.noHp,
-                style = MaterialTheme.typography.titleMedium
-            )
         }
     }
 }
@@ -139,9 +186,7 @@ fun PelangganLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onDetailClick(pelangganList) },
-                onDeleteClick = {
-                    onDeleteClick(pelangganList)
-                }
+                onDeleteClick = onDeleteClick
             )
         }
     }
@@ -181,44 +226,42 @@ fun PelangganStatus(
     modifier: Modifier = Modifier,
     onDetailClick: (String) -> Unit,
     onDeleteClick: (Pelanggan) -> Unit = {},
-){
+) {
     var deleteConfirmationPelanggan by remember { mutableStateOf<Pelanggan?>(null) }
 
     when (pelangganUiState) {
         is PelangganUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
 
-        is PelangganUiState.Success ->
+        is PelangganUiState.Success -> {
             if (pelangganUiState.pelanggan.isEmpty()) {
                 Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "Tidak ada data Kontak")
+                    Text(text = "Tidak ada data Pelanggan")
                 }
             } else {
-                Column {
-                    PelangganLayout(
-                        pelanggan = pelangganUiState.pelanggan,
-                        modifier = modifier.fillMaxWidth(),
-                        onDetailClick = {
-                            onDetailClick(it.idPelanggan.toString())
-                        },
-                        onDeleteClick = { pelanggan ->
-                            deleteConfirmationPelanggan = pelanggan
-                        },
-                    )
-
-                    deleteConfirmationPelanggan?.let { pelangganToDelete ->
-                        DeleteConfirmationDialog(
-                            onDeleteConfirm = {
-                                onDeleteClick(pelangganToDelete)
-                                deleteConfirmationPelanggan = null
-                            },
-                            onDeleteCancel = {
-                                deleteConfirmationPelanggan = null
-                            }
-                        )
+                PelangganLayout(
+                    pelanggan = pelangganUiState.pelanggan,
+                    modifier = modifier.fillMaxWidth(),
+                    onDetailClick = {
+                        onDetailClick(it.idPelanggan.toString())
+                    },
+                    onDeleteClick = { pelanggan ->
+                        deleteConfirmationPelanggan = pelanggan
                     }
+                )
+
+                deleteConfirmationPelanggan?.let { pelangganToDelete ->
+                    DeleteConfirmationDialog(
+                        onDeleteConfirm = {
+                            onDeleteClick(pelangganToDelete)
+                            deleteConfirmationPelanggan = null
+                        },
+                        onDeleteCancel = {
+                            deleteConfirmationPelanggan = null
+                        }
+                    )
                 }
             }
-
+        }
         is PelangganUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
     }
 }
@@ -232,16 +275,17 @@ fun PelangganScreen(
     modifier: Modifier = Modifier,
     onDetailClick: (String) -> Unit = {},
     viewModel: PelangganViewModel = viewModel(factory = PenyediaViewModel.Factory)
-){
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CostumeTopAppBar(
-                title = DestinasiPelanggan.titleRes,
+                title = "Pelanggan",
                 canNavigateBack = true,
-                navigateUp = navigateBack,
                 scrollBehavior = scrollBehavior,
+                navigateUp = navigateBack,
                 onRefresh = {
                     viewModel.getPelanggan()
                 }
@@ -251,20 +295,19 @@ fun PelangganScreen(
             FloatingActionButton(
                 onClick = navigateToitemEntry,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp)
-            ){
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Kontak")
+                modifier = Modifier.padding(16.dp),
+                containerColor = Color(0xFF2196F3)
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Pelanggan", tint = Color.White)
             }
-        },
-    ){ innerPadding ->
+        }
+    ) { innerPadding ->
         PelangganStatus(
             pelangganUiState = viewModel.pelangganUiState,
             retryAction = { viewModel.getPelanggan() },
             modifier = Modifier.padding(innerPadding),
-            onDetailClick = onDetailClick, onDeleteClick = {
-                viewModel.deletePelanggan(it.idPelanggan)
-                viewModel.getPelanggan()
-            }
+            onDetailClick = onDetailClick,
+            onDeleteClick = { viewModel.deletePelanggan(it.idPelanggan) }
         )
     }
 }

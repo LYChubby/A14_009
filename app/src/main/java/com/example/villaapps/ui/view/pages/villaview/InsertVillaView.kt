@@ -2,24 +2,39 @@ package com.example.villaapps.ui.view.pages.villaview
 
 import android.os.Build
 import androidx.annotation.RequiresExtension
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Hotel
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Villa
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.villaapps.navigation.DestinasiNavigasi
@@ -44,33 +59,74 @@ fun FormInputVilla(
     enabled: Boolean = true
 ) {
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = modifier.background(Color.White),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        OutlinedTextField(
+        TextField(
             value = insertDaftarVillaUiEvent.namaVilla,
             onValueChange = { onValueChange(insertDaftarVillaUiEvent.copy(namaVilla = it)) },
-            label = { Text(text = "Nama Villa") },
-            modifier = Modifier.fillMaxWidth(),
+            label = { Text("Nama Villa") },
             enabled = enabled,
-            singleLine = true
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Villa,
+                    contentDescription = "Villa",
+                    tint = Color(0xFF2196F3)
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.White,
+                focusedIndicatorColor = Color(0xFF2196F3),
+                unfocusedIndicatorColor = Color.Gray
+            ),
+            shape = RoundedCornerShape(12.dp)
         )
-        OutlinedTextField(
+
+        TextField(
             value = insertDaftarVillaUiEvent.alamat,
             onValueChange = { onValueChange(insertDaftarVillaUiEvent.copy(alamat = it)) },
-            label = { Text(text = "Alamat") },
-            modifier = Modifier.fillMaxWidth(),
+            label = { Text("Alamat") },
             enabled = enabled,
-            singleLine = true
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = "Alamat",
+                    tint = Color(0xFF4CAF50)
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.White,
+                focusedIndicatorColor = Color(0xFF2196F3),
+                unfocusedIndicatorColor = Color.Gray
+            ),
+            shape = RoundedCornerShape(12.dp)
         )
-        OutlinedTextField(
+
+        TextField(
             value = insertDaftarVillaUiEvent.kamarTersedia.toString(),
-            onValueChange = { val newValue = it.toIntOrNull() ?: 0
-                onValueChange(insertDaftarVillaUiEvent.copy(kamarTersedia = newValue)) },
-            label = { Text(text = "Kamar Tersedia") },
-            modifier = Modifier.fillMaxWidth(),
+            onValueChange = {
+                val newValue = it.toIntOrNull() ?: 0
+                onValueChange(insertDaftarVillaUiEvent.copy(kamarTersedia = newValue))
+            },
+            label = { Text("Kamar Tersedia") },
             enabled = enabled,
-            singleLine = true
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Hotel,
+                    contentDescription = "Kamar",
+                    tint = Color(0xFFFF9800)
+                )
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.White,
+                focusedIndicatorColor = Color(0xFF2196F3),
+                unfocusedIndicatorColor = Color.Gray
+            ),
+            shape = RoundedCornerShape(12.dp)
         )
         if (enabled) {
             Text(
@@ -78,6 +134,7 @@ fun FormInputVilla(
                 modifier = Modifier.padding(12.dp)
             )
         }
+
         Divider(
             thickness = 8.dp,
             modifier = Modifier.padding(12.dp)
@@ -93,19 +150,36 @@ fun EntryBodyVilla(
     modifier: Modifier = Modifier
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(18.dp),
-        modifier = modifier.padding(26.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color(0xFFF5F5F5))
+            .padding(16.dp)
     ) {
+
         FormInputVilla(
             insertDaftarVillaUiEvent = insertDaftarVillaUiState.insertDaftarVillaUiEvent,
             onValueChange = onDaftarVillaValueChange,
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Button(
             onClick = onSaveClick,
-            shape = MaterialTheme.shapes.small,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF2196F3)
+            ),
+            shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "Simpan")
+            Text(
+                text = "Simpan Villa",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.White
+            )
         }
     }
 }
@@ -125,14 +199,13 @@ fun EntryVillaScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CostumeTopAppBar(
-                title = DestinasiInsertVilla.titleRes,
+                title = "Tambah Villa",
                 canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 navigateUp = navigateBack
             )
         }
-    ) {
-            innerPadding ->
+    ) { innerPadding ->
         EntryBodyVilla(
             insertDaftarVillaUiState = viewModel.insertDaftarVillaUiState,
             onDaftarVillaValueChange = viewModel::updateInsertDaftarVillaUiState,

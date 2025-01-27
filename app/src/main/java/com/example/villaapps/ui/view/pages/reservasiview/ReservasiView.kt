@@ -1,4 +1,4 @@
-package com.example.villaapps.ui.view.pages.reservasiview
+ package com.example.villaapps.ui.view.pages.reservasiview
 
 import android.os.Build
 import android.util.Log
@@ -108,6 +108,8 @@ private fun DeleteConfirmationDialog(
 @Composable
 fun ReservasiCard(
     reservasi: Reservasi,
+    namaVilla: String,
+    namaPelanggan: String,
     modifier: Modifier = Modifier,
     onDeleteClick: (Reservasi) -> Unit = {}
 ) {
@@ -147,7 +149,7 @@ fun ReservasiCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Nama Pelanggan : ${reservasi.idPelanggan}",
+                    text = namaPelanggan,
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -206,7 +208,7 @@ fun ReservasiCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Nama Villa : ${reservasi.idVilla}",
+                    text = "Nama Villa : $namaVilla",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
@@ -219,6 +221,8 @@ fun ReservasiCard(
 @Composable
 fun ReservasiLayout(
     reservasi: List<Reservasi>,
+    namaVillas: Map<Int, String>,
+    namaPelanggans: Map<Int, String>,
     modifier: Modifier = Modifier,
     onDetailClick: (Reservasi) -> Unit,
     onDeleteClick: (Reservasi) -> Unit = {}
@@ -228,12 +232,14 @@ fun ReservasiLayout(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(reservasi) { reservasiList ->
+        items(reservasi) { reservasiItem ->
             ReservasiCard(
-                reservasi = reservasiList,
+                reservasi = reservasiItem,
+                namaVilla = namaVillas[reservasiItem.idVilla] ?: "Unknown Villa",
+                namaPelanggan = namaPelanggans[reservasiItem.idPelanggan] ?: "Unknown Customer",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onDetailClick(reservasiList) },
+                    .clickable { onDetailClick(reservasiItem) },
                 onDeleteClick = onDeleteClick
             )
         }
@@ -283,13 +289,15 @@ fun ReservasiStatus(
         )
 
         is ReservasiUiState.Success -> {
-            if (reservasiUiState.resrvasi.isEmpty()) {
+            if (reservasiUiState.reservasi.isEmpty()) {
                 Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = "Tidak ada data Reservasi")
                 }
             } else {
                 ReservasiLayout(
-                    reservasi = reservasiUiState.resrvasi,
+                    reservasi = reservasiUiState.reservasi,
+                    namaVillas = reservasiUiState.namaVillas,
+                    namaPelanggans = reservasiUiState.namaPelanggans,
                     modifier = modifier.fillMaxWidth(),
                     onDetailClick = {
                         onDetailClick(it.idReservasi.toString())

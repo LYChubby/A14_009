@@ -42,21 +42,6 @@ class InsertPelangganViewModel(
     private val pelangganRepository: PelangganRepository
 ): ViewModel() {
 
-    private val _daftarPelanggan = MutableStateFlow<List<Pair<Int, String>>>(emptyList())
-    val daftarPelanggan: StateFlow<List<Pair<Int, String>>> = _daftarPelanggan
-
-    init {
-        viewModelScope.launch {
-            try {
-                val pelangganData = pelangganRepository.getAllPelanggan().data
-                _daftarPelanggan.value = pelangganData.map { it.idPelanggan to it.namaPelanggan }
-                Log.d("InsertReservasiViewModel", "Fetched Pelanggan Data: $pelangganData")
-            } catch (e: Exception) {
-                _daftarPelanggan.value = emptyList()
-            }
-        }
-    }
-
     var insertPelangganUiState by mutableStateOf(InsertPelangganUiState())
         private set
 

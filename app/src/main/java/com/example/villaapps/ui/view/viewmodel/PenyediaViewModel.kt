@@ -64,7 +64,11 @@ object PenyediaViewModel {
         }
 
         initializer {
-            ReservasiViewModel(aplikasiReservasi().reservasicontainer.reservasiRepository)
+            ReservasiViewModel(
+                aplikasiReservasi().reservasicontainer.reservasiRepository,
+                aplikasiReservasi().reservasicontainer.daftarVillaRepository,
+                aplikasiReservasi().reservasicontainer.pelangganRepository
+            )
         }
         initializer {
             InsertReservasiViewModel(
@@ -76,7 +80,9 @@ object PenyediaViewModel {
         initializer {
             DetailReservasiViewModel(
                 createSavedStateHandle(),
-                aplikasiReservasi().reservasicontainer.reservasiRepository
+                aplikasiReservasi().reservasicontainer.reservasiRepository,
+                aplikasiReservasi().reservasicontainer.daftarVillaRepository,
+                aplikasiReservasi().reservasicontainer.pelangganRepository
             )
         }
         initializer {

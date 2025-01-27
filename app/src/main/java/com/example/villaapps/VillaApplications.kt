@@ -34,9 +34,7 @@ class VillaApplications : Application() {
             .addConverterFactory(Json { ignoreUnknownKeys = true }.asConverterFactory("application/json".toMediaType()))
             .client(OkHttpClient.Builder().addInterceptor { chain ->
                 val request = chain.request()
-                Log.d("API Request", "URL: ${request.url}")
                 val response = chain.proceed(request)
-                Log.d("API Response", "Response: ${response.body?.string()}")
                 response
             }.build())
             .build()
@@ -44,11 +42,9 @@ class VillaApplications : Application() {
         val villaService: VillaService = retrofit.create(VillaService::class.java)
         val pelangganService: PelangganService = retrofit.create(PelangganService::class.java)
 
-        // Contoh instansiasi repository (ubah sesuai implementasi Anda)
         val daftarVillaRepository = NetworkDaftarVillaRepository(daftarVillaApiService = villaService)
         val pelangganRepository = NetworkPelangganRepository(pelangganApiService = pelangganService)
 
-        // Inisialisasi container dengan repository yang sesuai
         villacontainer = VillaContainer()
         pelanggancontainer = PelangganContainer()
         reservasicontainer = ReservasiContainer(

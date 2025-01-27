@@ -9,12 +9,12 @@ data class DaftarVilla (
     val idVilla: Int,
 
     @SerialName("nama_villa")
-    val namaVilla: String,
+    val namaVilla: String ="",
 
-    val alamat: String,
+    val alamat: String ="",
 
     @SerialName("kamar_tersedia")
-    val kamarTersedia: Int,
+    val kamarTersedia: Int = 0
 )
 
 @Serializable

@@ -103,6 +103,8 @@ private fun DeleteConfirmationDialog(
 fun ItemDetailReservasi(
     modifier: Modifier = Modifier,
     reservasi: Reservasi,
+    namaVilla: String,
+    namaPelanggan: String
 ) {
     Column(
         modifier = modifier
@@ -129,7 +131,7 @@ fun ItemDetailReservasi(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Nama Pelanggan : ${reservasi.idPelanggan}",
+                text = namaPelanggan,
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -202,7 +204,7 @@ fun ItemDetailReservasi(
                     modifier = Modifier.padding(end = 8.dp)
                 )
                 Text(
-                    text = "Nama Villa : ${reservasi.idVilla}",
+                    text = "Nama Villa : $namaVilla",
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.Gray
                 )
@@ -239,6 +241,8 @@ fun BodyDetailReservasi(
             ) {
                 ItemDetailReservasi(
                     reservasi = detailReservasiUiState.reservasi,
+                    namaVilla = detailReservasiUiState.namaVillas.toString(),
+                    namaPelanggan = detailReservasiUiState.namaPelanggans.toString(),
                     modifier = Modifier
                 )
 

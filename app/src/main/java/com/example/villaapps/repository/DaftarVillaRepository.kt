@@ -1,5 +1,6 @@
 package com.example.villaapps.repository
 
+import android.util.Log
 import com.example.villaapps.model.DaftarVilla
 import com.example.villaapps.model.DaftarVillaResponse
 import com.example.villaapps.service.VillaService
@@ -43,8 +44,12 @@ class NetworkDaftarVillaRepository(
         }
     }
 
-    override suspend fun getAllVilla(): DaftarVillaResponse =
-        daftarVillaApiService.getAllVilla()
+    override suspend fun getAllVilla(): DaftarVillaResponse {
+        val response = daftarVillaApiService.getAllVilla()
+        Log.d("VillaRepository", "Raw JSON response: ${response}")
+        Log.d("VillaRepository", "Parsed data: ${response.data}")
+        return response
+    }
 
     override suspend fun getVillaById(idVilla: Int): DaftarVilla {
         return daftarVillaApiService.getVillaById(idVilla).data

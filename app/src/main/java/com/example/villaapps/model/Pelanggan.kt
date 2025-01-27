@@ -10,10 +10,10 @@ data class Pelanggan (
     val idPelanggan: Int,
 
     @SerialName("nama_pelanggan")
-    val namaPelanggan: String,
+    val namaPelanggan: String ="",
 
     @SerialName("no_hp")
-    val noHp: String,
+    val noHp: String =""
 
 )
 

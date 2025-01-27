@@ -51,6 +51,14 @@ fun Reservasi.toInsertReservasiUiEvent(): InsertReservasiUiEvent = InsertReserva
     checkOut = checkOut,
 )
 
+fun InsertReservasiUiEvent.isValid(): Boolean {
+    return idVilla != 0 &&
+            idPelanggan != 0 &&
+            checkIn.isNotBlank() &&
+            checkOut.isNotBlank() &&
+            jumlahKamar > 0
+}
+
 class InsertReservasiViewModel(
     private val reservasiRepository: ReservasiRepository,
     private val daftarVillaRepository: DaftarVillaRepository,
@@ -59,6 +67,12 @@ class InsertReservasiViewModel(
 
     var insertReservasiUiState by mutableStateOf(InsertReservasiUiState())
         private set
+
+    private val _daftarVilla = MutableStateFlow<List<Pair<Int, String>>>(emptyList())
+    val daftarVilla: StateFlow<List<Pair<Int, String>>> = _daftarVilla
+
+    private val _daftarPelanggan = MutableStateFlow<List<Pair<Int, String>>>(emptyList())
+    val daftarPelanggan: StateFlow<List<Pair<Int, String>>> = _daftarPelanggan
 
     init {
         fetchDaftarVilla()
@@ -69,12 +83,10 @@ class InsertReservasiViewModel(
         viewModelScope.launch {
             try {
                 val villaData = daftarVillaRepository.getAllVilla().data
-                insertReservasiUiState = insertReservasiUiState.copy(
-                    daftarVilla = villaData.map { it.idVilla to it.namaVilla }
-                )
+                _daftarVilla.value = villaData.map { it.idVilla to it.namaVilla }
+                Log.d("InsertReservasiViewModel", "Fetched Villa Data: $villaData")
             } catch (e: Exception) {
-                insertReservasiUiState = insertReservasiUiState.copy(daftarVilla = emptyList())
-                e.printStackTrace()
+                _daftarVilla.value = emptyList()
             }
         }
     }
@@ -83,12 +95,10 @@ class InsertReservasiViewModel(
         viewModelScope.launch {
             try {
                 val pelangganData = pelangganRepository.getAllPelanggan().data
-                insertReservasiUiState = insertReservasiUiState.copy(
-                    daftarPelanggan = pelangganData.map { it.idPelanggan to it.namaPelanggan }
-                )
+                _daftarPelanggan.value = pelangganData.map { it.idPelanggan to it.namaPelanggan }
+                Log.d("InsertReservasiViewModel", "Fetched Pelanggan Data: $pelangganData")
             } catch (e: Exception) {
-                insertReservasiUiState = insertReservasiUiState.copy(daftarPelanggan = emptyList())
-                e.printStackTrace()
+                _daftarPelanggan.value = emptyList()
             }
         }
     }
@@ -97,11 +107,18 @@ class InsertReservasiViewModel(
         insertReservasiUiState = insertReservasiUiState.copy(insertReservasiUiEvent = insertReservasiUiEvent)
     }
 
-    suspend fun insertReservasi() {
-        try {
-            reservasiRepository.insertReservasi(insertReservasiUiState.insertReservasiUiEvent.toReservasi())
+    suspend fun insertReservasi(): Boolean {
+        val currentState = insertReservasiUiState.insertReservasiUiEvent
+        if (!currentState.isValid()) {
+            return false
+        }
+
+        return try {
+            reservasiRepository.insertReservasi(currentState.toReservasi())
+            true
         } catch (e: Exception) {
             e.printStackTrace()
+            false
         }
     }
 }

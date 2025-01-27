@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 data class InsertDaftarVillaUiState (
-    val insertDaftarVillaUiEvent: InsertDaftarVillaUiEvent = InsertDaftarVillaUiEvent()
+    val insertDaftarVillaUiEvent: InsertDaftarVillaUiEvent = InsertDaftarVillaUiEvent(),
 )
 
 data class InsertDaftarVillaUiEvent (
@@ -44,21 +44,6 @@ fun DaftarVilla.toInsertDaftarVillaUiEvent(): InsertDaftarVillaUiEvent = InsertD
 class InsertDaftarVillaViewModel (
     private val daftarVillaRepository: DaftarVillaRepository
 ): ViewModel() {
-
-    private val _daftarVilla = MutableStateFlow<List<Pair<Int, String>>>(emptyList())
-    val daftarVilla: StateFlow<List<Pair<Int, String>>> = _daftarVilla
-
-    init {
-        viewModelScope.launch {
-            try {
-                val villaData = daftarVillaRepository.getAllVilla().data
-                _daftarVilla.value = villaData.map { it.idVilla to it.namaVilla }
-                Log.d("InsertReservasiViewModel", "Fetched Villa Data: $villaData")
-            } catch (e: Exception) {
-                _daftarVilla.value = emptyList()
-            }
-        }
-    }
 
     var insertDaftarVillaUiState by mutableStateOf(InsertDaftarVillaUiState())
         private set

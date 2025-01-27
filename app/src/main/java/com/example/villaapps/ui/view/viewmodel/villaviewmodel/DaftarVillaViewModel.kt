@@ -44,6 +44,10 @@ class DaftarVillaViewModel(
         }
     }
 
+    fun reloadDaftarVilla() {
+        getDaftarVilla()
+    }
+
     fun deleteDaftarVilla(idVilla: Int) {
         viewModelScope.launch {
             try {

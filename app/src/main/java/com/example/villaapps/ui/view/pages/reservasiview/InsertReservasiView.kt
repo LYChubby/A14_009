@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Hotel
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Villa
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -27,9 +28,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -40,9 +47,11 @@ import com.example.villaapps.navigation.DestinasiNavigasi
 import com.example.villaapps.ui.customwidget.CostumeTopAppBar
 import com.example.villaapps.ui.customwidget.DynamicSelectedView
 import com.example.villaapps.ui.view.viewmodel.PenyediaViewModel
+import com.example.villaapps.ui.view.viewmodel.pelangganviewmodel.InsertPelangganViewModel
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.InsertReservasiUiEvent
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.InsertReservasiUiState
 import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.InsertReservasiViewModel
+import com.example.villaapps.ui.view.viewmodel.villaviewmodel.InsertDaftarVillaViewModel
 import kotlinx.coroutines.launch
 
 object DestinasiInsertReservasi: DestinasiNavigasi {
@@ -179,6 +188,8 @@ fun FormInputReservasi(
 fun EntryBodyReservasi(
     insertReservasiUiState: InsertReservasiUiState,
     onReservasiValueChange: (InsertReservasiUiEvent) -> Unit,
+    daftarVilla: List<Pair<Int, String>>,
+    daftarPelanggan: List<Pair<Int, String>>,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -190,8 +201,8 @@ fun EntryBodyReservasi(
             insertReservasiUiEvent = insertReservasiUiState.insertReservasiUiEvent,
             onValueChange = onReservasiValueChange,
             modifier = Modifier.fillMaxWidth(),
-            daftarVilla = insertReservasiUiState.daftarVilla,
-            daftarPelanggan = insertReservasiUiState.daftarPelanggan,
+            daftarVilla = daftarVilla,
+            daftarPelanggan = daftarPelanggan,
             onVillaSelected = { idVilla ->
                 onReservasiValueChange(insertReservasiUiState.insertReservasiUiEvent.copy(idVilla = idVilla))
             },
@@ -226,9 +237,10 @@ fun EntryReservasiScreen(
     modifier: Modifier = Modifier,
     viewModel: InsertReservasiViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
-
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var showError by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -239,20 +251,39 @@ fun EntryReservasiScreen(
                 navigateUp = navigateBack
             )
         }
-    ) {
-            innerPadding ->
+    ) { innerPadding ->
+        if (showError) {
+            AlertDialog(
+                onDismissRequest = { showError = false },
+                title = { Text("Error") },
+                text = { Text("Semua data harus diisi!") },
+                confirmButton = {
+                    TextButton(onClick = { showError = false }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
+
         EntryBodyReservasi(
             insertReservasiUiState = viewModel.insertReservasiUiState,
             onReservasiValueChange = viewModel::updateInsertReservasiUiState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.insertReservasi()
-                    navigateBack()
+                    val success = viewModel.insertReservasi()
+                    if (success) {
+                        navigateBack()
+                    } else {
+                        showError = true
+                    }
                 }
             },
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            daftarVilla = viewModel.daftarVilla.collectAsState().value,
+            daftarPelanggan = viewModel.daftarPelanggan.collectAsState().value
         )
     }
 }

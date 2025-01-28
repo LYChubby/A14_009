@@ -46,8 +46,7 @@ fun DaftarVilla.toInsertDaftarVillaUiEvent(): InsertDaftarVillaUiEvent = InsertD
 )
 
 fun InsertDaftarVillaUiEvent.isValid(): Boolean {
-    return idVilla != 0 &&
-            namaVilla.isNotBlank() &&
+    return namaVilla.isNotBlank() &&
             alamat.isNotBlank() &&
             kamarTersedia > 0
 }

@@ -46,8 +46,7 @@ fun Review.toInsertReviewUiEvent(): InsertReviewUiEvent = InsertReviewUiEvent(
 )
 
 fun InsertReviewUiEvent.isValid(): Boolean {
-    return idReview != 0 &&
-            idReservasi != 0 &&
+    return idReservasi != 0 &&
             nilai.isNotBlank() &&
             komentar.isNotBlank()
 }

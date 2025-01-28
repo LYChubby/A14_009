@@ -42,8 +42,7 @@ fun Pelanggan.toInsertPelangganUiEvent(): InsertPelangganUiEvent = InsertPelangg
 )
 
 fun InsertPelangganUiEvent.isValid(): Boolean {
-    return idPelanggan != 0 &&
-            namaPelanggan.isNotBlank() &&
+    return namaPelanggan.isNotBlank() &&
             noHp.isNotBlank()
 }
 

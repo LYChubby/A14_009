@@ -14,7 +14,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Grade
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Villa
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -54,7 +56,9 @@ fun FormInputReview(
     insertReviewUiEvent: InsertReviewUiEvent,
     modifier: Modifier = Modifier,
     onValueChange: (InsertReviewUiEvent) -> Unit = {},
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    daftarPelanggan: List<Pair<Int, String>>,
+    onPelangganSelected: (Int) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -62,6 +66,26 @@ fun FormInputReview(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        DynamicSelectedView(
+            selectedValue = daftarPelanggan.firstOrNull { it.first == insertReviewUiEvent.idReservasi }?.second ?: "Pilih Pelanggan",
+            options = daftarPelanggan.map { it.second },
+            label = "Pilih Pelanggan",
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = Color(0xFF2196F3)
+                )
+            },
+            onValueChangedEvent = { selectedPelanggan ->
+                val idReservasi = daftarPelanggan.firstOrNull { it.second == selectedPelanggan }?.first
+                idReservasi?.let {
+                    onValueChange(insertReviewUiEvent.copy(idReservasi = it))
+                    onPelangganSelected(it)
+                }
+            }
+        )
+
         DynamicSelectedView(
             selectedValue = insertReviewUiEvent.nilai,
             options = listOf("Sangat Puas", "Puas", "Biasa", "Tidak Puas", "Sangat Tidak Puas"),
@@ -130,6 +154,10 @@ fun EntryBodyReview(
         FormInputReview(
             insertReviewUiEvent = insertReviewUiState.insertReviewUiEvent,
             onValueChange = onReviewValueChange,
+            daftarPelanggan = insertReviewUiState.daftarPelanggan,
+            onPelangganSelected = { idReservasi ->
+                onReviewValueChange(insertReviewUiState.insertReviewUiEvent.copy(idReservasi = idReservasi))
+            },
             modifier = Modifier.fillMaxWidth()
         )
         Button(

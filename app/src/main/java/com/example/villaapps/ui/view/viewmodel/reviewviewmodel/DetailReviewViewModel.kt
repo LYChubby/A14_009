@@ -10,13 +10,18 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.villaapps.model.Review
+import com.example.villaapps.repository.PelangganRepository
+import com.example.villaapps.repository.ReservasiRepository
 import com.example.villaapps.repository.ReviewRepository
 import com.example.villaapps.ui.view.pages.reviewview.DestinasiDetailReview
 import kotlinx.coroutines.launch
 import java.io.IOException
 
 sealed class DetailReviewUiState {
-    data class Success(val review: Review) : DetailReviewUiState()
+    data class Success(
+        val review: Review,
+        val namaPelanggans: String
+    ) : DetailReviewUiState()
     object Error : DetailReviewUiState()
     object Loading : DetailReviewUiState()
 }
@@ -24,7 +29,9 @@ sealed class DetailReviewUiState {
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 class DetailReviewViewModel (
     savedStateHandle: SavedStateHandle,
-    private val reviewRepository: ReviewRepository
+    private val reviewRepository: ReviewRepository,
+    private val pelangganRepository: PelangganRepository,
+    private val reservasiRepository: ReservasiRepository
 ): ViewModel() {
     private val idReview: Int = checkNotNull(savedStateHandle[DestinasiDetailReview.IDREVIEW])
 
@@ -39,13 +46,23 @@ class DetailReviewViewModel (
     fun getReviewById() {
         viewModelScope.launch {
             detailReviewUiState = DetailReviewUiState.Loading
-            detailReviewUiState = try {
+            try {
                 val review = reviewRepository.getReviewById(idReview)
-                DetailReviewUiState.Success(review)
+
+                val reservasi = reservasiRepository.getReservasiById(review.idReservasi)
+
+                val namaPelanggan = pelangganRepository.getAllPelanggan().data
+                    .find { it.idPelanggan == reservasi.idPelanggan }?.namaPelanggan
+                    ?: "Pelanggan Tidak Diketahui"
+
+                detailReviewUiState = DetailReviewUiState.Success(
+                    review = review,
+                    namaPelanggans = namaPelanggan
+                )
             } catch (e: IOException) {
-                DetailReviewUiState.Error
+                detailReviewUiState = DetailReviewUiState.Error
             } catch (e: HttpException) {
-                DetailReviewUiState.Error
+                detailReviewUiState = DetailReviewUiState.Error
             }
         }
     }

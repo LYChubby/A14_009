@@ -94,6 +94,7 @@ private fun DeleteConfirmationDialog(
 @Composable
 fun ReviewCard(
     review: Review,
+    namaPelanggan: String,
     modifier: Modifier = Modifier,
     onDeleteClick: (Review) -> Unit
 ) {
@@ -126,7 +127,7 @@ fun ReviewCard(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = "Nama : ${review.idReservasi}",
+                        text = namaPelanggan,
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold
                         )
@@ -171,6 +172,7 @@ fun ReviewCard(
 @Composable
 fun ReviewLayout(
     review: List<Review>,
+    namaPelanggans: Map<Int, String>,
     modifier: Modifier = Modifier,
     onDetailClick: (Review) -> Unit,
     onDeleteClick: (Review) -> Unit = {}
@@ -183,6 +185,7 @@ fun ReviewLayout(
         items(review) { reviewList ->
             ReviewCard(
                 review = reviewList,
+                namaPelanggan = namaPelanggans[reviewList.idReservasi] ?: "Unknown Customer",
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onDetailClick(reviewList) },
@@ -242,6 +245,7 @@ fun ReviewStatus(
             } else {
                 ReviewLayout(
                     review = reviewUiState.review,
+                    namaPelanggans = reviewUiState.namaPelanggans,
                     modifier = modifier.fillMaxWidth(),
                     onDetailClick = {
                         onDetailClick(it.idReview.toString())

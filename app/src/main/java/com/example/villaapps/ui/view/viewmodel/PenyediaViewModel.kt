@@ -90,15 +90,24 @@ object PenyediaViewModel {
         }
 
         initializer {
-            ReviewViewModel(aplikasiReservasi().reviewcontainer.reviewRepository)
+            ReviewViewModel(
+                aplikasiReservasi().reviewcontainer.reviewRepository,
+                aplikasiReservasi().reservasicontainer.pelangganRepository,
+                aplikasiReservasi().reservasicontainer.reservasiRepository
+            )
         }
         initializer {
-            InsertReviewViewModel(aplikasiReservasi().reviewcontainer.reviewRepository)
+            InsertReviewViewModel(
+                aplikasiReservasi().reviewcontainer.reviewRepository,
+                aplikasiReservasi().reservasicontainer.pelangganRepository
+            )
         }
         initializer {
             DetailReviewViewModel(
                 createSavedStateHandle(),
-                aplikasiReservasi().reviewcontainer.reviewRepository
+                aplikasiReservasi().reviewcontainer.reviewRepository,
+                aplikasiReservasi().reservasicontainer.pelangganRepository,
+                aplikasiReservasi().reservasicontainer.reservasiRepository
             )
         }
         initializer {

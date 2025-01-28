@@ -103,7 +103,8 @@ private fun DeleteConfirmationDialog(
 @Composable
 fun ItemDetailReview(
     modifier: Modifier = Modifier,
-    review: Review
+    review: Review,
+    namaPelanggan: String
 ) {
     Column(
         modifier = modifier
@@ -130,7 +131,7 @@ fun ItemDetailReview(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Nama : ${review.idReview}",
+                text = namaPelanggan,
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -202,6 +203,7 @@ fun BodyDetailReview(
             ) {
                 ItemDetailReview(
                     review = detailReviewUiState.review,
+                    namaPelanggan = detailReviewUiState.namaPelanggans.toString(),
                     modifier = Modifier
                 )
 

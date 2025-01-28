@@ -2,7 +2,6 @@ package com.example.villaapps.ui.view.viewmodel.reservasiviewmodel
 
 import android.net.http.HttpException
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,8 +9,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.villaapps.model.DaftarVilla
-import com.example.villaapps.model.Pelanggan
 import com.example.villaapps.model.Reservasi
 import com.example.villaapps.repository.DaftarVillaRepository
 import com.example.villaapps.repository.PelangganRepository
@@ -23,8 +20,8 @@ import java.io.IOException
 sealed class DetailReservasiUiState {
     data class Success(
         val reservasi: Reservasi,
-        val namaVillas: Map<Int, String>,
-        val namaPelanggans: Map<Int, String>
+        val namaVillas: String,
+        val namaPelanggans: String
     ) : DetailReservasiUiState()
     object Error : DetailReservasiUiState()
     object Loading : DetailReservasiUiState()
@@ -52,17 +49,19 @@ class DetailReservasiViewModel (
             detailReservasiUiState = DetailReservasiUiState.Loading
             try {
                 val reservasi = reservasiRepository.getReservasiById(idReservasi)
-                val namaVillas = villaRepository.getAllVilla().data.associate { villa ->
-                    villa.idVilla to villa.namaVilla
-                }
-                val namaPelanggans = pelangganRepository.getAllPelanggan().data.associate { pelanggan ->
-                    pelanggan.idPelanggan to pelanggan.namaPelanggan
-                }
+
+                val namaVilla = villaRepository.getAllVilla().data
+                    .find { it.idVilla == reservasi.idVilla }?.namaVilla
+                    ?: "Villa Tidak Diketahui"
+
+                val namaPelanggan = pelangganRepository.getAllPelanggan().data
+                    .find { it.idPelanggan == reservasi.idPelanggan }?.namaPelanggan
+                    ?: "Pelanggan Tidak Diketahui"
 
                 detailReservasiUiState = DetailReservasiUiState.Success(
                     reservasi = reservasi,
-                    namaVillas = namaVillas,
-                    namaPelanggans = namaPelanggans
+                    namaVillas = namaVilla,
+                    namaPelanggans = namaPelanggan
                 )
             } catch (e: IOException) {
                 detailReservasiUiState = DetailReservasiUiState.Error

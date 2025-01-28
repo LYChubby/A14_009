@@ -9,6 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.villaapps.model.Review
 import com.example.villaapps.repository.PelangganRepository
 import com.example.villaapps.repository.ReviewRepository
+import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.InsertReservasiUiEvent
+import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.isValid
+import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.toReservasi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -42,6 +45,13 @@ fun Review.toInsertReviewUiEvent(): InsertReviewUiEvent = InsertReviewUiEvent(
     komentar = komentar
 )
 
+fun InsertReviewUiEvent.isValid(): Boolean {
+    return idReview != 0 &&
+            idReservasi != 0 &&
+            nilai.isNotBlank() &&
+            komentar.isNotBlank()
+}
+
 class InsertReviewViewModel (
     private val reviewRepository: ReviewRepository,
     private val pelangganRepository: PelangganRepository
@@ -72,13 +82,18 @@ class InsertReviewViewModel (
         insertReviewuiState = InsertReviewUiState(insertReviewUiEvent = insertReviewUiEvent)
     }
 
-    suspend fun insertReview() {
-        viewModelScope.launch {
-            try {
-                reviewRepository.insertReview(insertReviewuiState.insertReviewUiEvent.toReview())
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    suspend fun insertReview(): Boolean {
+        val currentState = insertReviewuiState.insertReviewUiEvent
+        if (!currentState.isValid()) {
+            return false
+        }
+
+        return try {
+            reviewRepository.insertReview(currentState.toReview())
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
 }

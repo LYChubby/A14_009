@@ -3,9 +3,11 @@ package com.example.villaapps.ui.view.pages.villaview
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,15 +15,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Grade
 import androidx.compose.material.icons.filled.Hotel
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.RateReview
 import androidx.compose.material.icons.filled.Villa
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
@@ -34,6 +40,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -51,14 +58,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.example.villaapps.model.DaftarVilla
+import com.example.villaapps.model.Review
 import com.example.villaapps.navigation.DestinasiNavigasi
 import com.example.villaapps.ui.view.viewmodel.PenyediaViewModel
 import com.example.villaapps.ui.customwidget.CostumeTopAppBar
-import com.example.villaapps.ui.view.pages.reservasiview.DestinasiInsertReservasi
 import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DetailDaftarVillaUiState
 import com.example.villaapps.ui.view.viewmodel.villaviewmodel.DetailDaftarVillaViewModel
 
@@ -177,6 +182,110 @@ fun ItemDetailVilla(
 }
 
 @Composable
+fun ReviewCard(
+    review: Review,
+    namaPelanggan: String,
+    modifier: Modifier = Modifier,
+    onDeleteClick: (Review) -> Unit
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0))
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Icon(
+                    imageVector = Icons.Default.RateReview,
+                    contentDescription = "Review",
+                    modifier = Modifier.size(40.dp),
+                    tint = Color.Gray
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = namaPelanggan,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Grade,
+                            contentDescription = "Phone",
+                            tint = Color(0xFF4CAF50),
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = review.nilai,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray
+                        )
+                    }
+                }
+                IconButton(
+                    onClick = { onDeleteClick(review) },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(
+                            Color(0xFFFF5252).copy(alpha = 0.1f),
+                            shape = CircleShape
+                        )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete Review",
+                        tint = Color(0xFFFF5252)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ReviewLayout(
+    review: List<Review>,
+    namaPelanggans: List<Review>,
+    modifier: Modifier = Modifier,
+    onDetailClick: (Review) -> Unit,
+    onDeleteClick: (Review) -> Unit = {}
+) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(review) { reviewList ->
+            ReviewCard(
+                review = reviewList,
+                namaPelanggan = (namaPelanggans[reviewList.idReservasi] ?: "Unknown Customer").toString(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onDetailClick(reviewList) },
+                onDeleteClick = onDeleteClick
+            )
+        }
+    }
+}
+
+@Composable
 fun BodyDetailVilla(
     modifier: Modifier = Modifier,
     detailDaftarVillaUiState: DetailDaftarVillaUiState,
@@ -254,8 +363,14 @@ fun BodyDetailVilla(
                         color = Color.White
                     )
                 }
+//                ReviewLayout(
+//                    review = detailDaftarVillaUiState.reviews,
+//                    namaPelanggans = detailDaftarVillaUiState.reviews,
+//                    modifier = Modifier,
+//                    onDetailClick = { /* Handle detail click */ },
+//                    onDeleteClick = { /* Handle delete click */ }
+//                )
 
-                // Delete Confirmation
                 if (deleteConfirmationRequired) {
                     DeleteConfirmationDialog(
                         onDeleteConfirm = {
@@ -299,7 +414,7 @@ fun DetailVillaView(
 ) {
 
     LaunchedEffect(idVilla) {
-        viewModel.getDaftarVillaById()
+        viewModel.getDaftarVillaWithReviews()
     }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

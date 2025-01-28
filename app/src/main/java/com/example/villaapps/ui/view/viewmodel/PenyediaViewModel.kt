@@ -39,7 +39,8 @@ object PenyediaViewModel {
         initializer {
             DetailDaftarVillaViewModel(
                 createSavedStateHandle(),
-                aplikasiReservasi().villacontainer.daftarVillaRepository
+                aplikasiReservasi().villacontainer.daftarVillaRepository,
+                aplikasiReservasi().reservasicontainer.reviewRepository
             )
         }
         initializer {

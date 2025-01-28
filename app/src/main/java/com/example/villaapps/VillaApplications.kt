@@ -1,7 +1,6 @@
 package com.example.villaapps
 
 import android.app.Application
-import android.util.Log
 import com.example.villaapps.container.AppPelangganContainer
 import com.example.villaapps.container.AppReservasiContainer
 import com.example.villaapps.container.AppReviewContainer
@@ -12,7 +11,9 @@ import com.example.villaapps.container.ReviewContainer
 import com.example.villaapps.container.VillaContainer
 import com.example.villaapps.repository.NetworkDaftarVillaRepository
 import com.example.villaapps.repository.NetworkPelangganRepository
+import com.example.villaapps.repository.NetworkReviewRepository
 import com.example.villaapps.service.PelangganService
+import com.example.villaapps.service.ReviewServices
 import com.example.villaapps.service.VillaService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -41,15 +42,20 @@ class VillaApplications : Application() {
 
         val villaService: VillaService = retrofit.create(VillaService::class.java)
         val pelangganService: PelangganService = retrofit.create(PelangganService::class.java)
+        val reviewService: ReviewServices = retrofit.create(ReviewServices::class.java)
+
 
         val daftarVillaRepository = NetworkDaftarVillaRepository(daftarVillaApiService = villaService)
         val pelangganRepository = NetworkPelangganRepository(pelangganApiService = pelangganService)
+        val reviewRepository = NetworkReviewRepository(reviewApiService = reviewService)
+
 
         villacontainer = VillaContainer()
         pelanggancontainer = PelangganContainer()
         reservasicontainer = ReservasiContainer(
             pelangganRepository = pelangganRepository,
-            daftarVillaRepository = daftarVillaRepository
+            daftarVillaRepository = daftarVillaRepository,
+            reviewRepository = reviewRepository
         )
         reviewcontainer = ReviewContainer()
     }

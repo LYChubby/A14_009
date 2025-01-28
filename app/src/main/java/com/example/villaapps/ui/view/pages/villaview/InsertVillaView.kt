@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Hotel
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Villa
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -26,11 +27,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -195,6 +201,7 @@ fun EntryVillaScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var showError by remember { mutableStateOf(false) }
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -206,13 +213,30 @@ fun EntryVillaScreen(
             )
         }
     ) { innerPadding ->
+        if (showError) {
+            AlertDialog(
+                onDismissRequest = { showError = false },
+                title = { Text("Error") },
+                text = { Text("Semua data harus diisi!") },
+                confirmButton = {
+                    TextButton(onClick = { showError = false }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
+
         EntryBodyVilla(
             insertDaftarVillaUiState = viewModel.insertDaftarVillaUiState,
             onDaftarVillaValueChange = viewModel::updateInsertDaftarVillaUiState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.insertDaftarVilla()
-                    navigateBack()
+                    val success = viewModel.insertDaftarVilla()
+                    if (success) {
+                        navigateBack()
+                    } else {
+                        showError = true
+                    }
                 }
             },
             modifier = Modifier.padding(innerPadding)

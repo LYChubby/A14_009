@@ -2,11 +2,11 @@ package com.example.villaapps.container
 
 import com.example.villaapps.repository.DaftarVillaRepository
 import com.example.villaapps.repository.NetworkReservasiRepository
+import com.example.villaapps.repository.NetworkReviewRepository
 import com.example.villaapps.repository.PelangganRepository
 import com.example.villaapps.repository.ReservasiRepository
-import com.example.villaapps.service.PelangganService
+import com.example.villaapps.repository.ReviewRepository
 import com.example.villaapps.service.ReservasiServices
-import com.example.villaapps.service.VillaService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -16,11 +16,13 @@ interface AppReservasiContainer {
     val reservasiRepository: ReservasiRepository
     val pelangganRepository: PelangganRepository
     val daftarVillaRepository: DaftarVillaRepository
+    val reviewRepository: ReviewRepository
 }
 
 class ReservasiContainer(
     override val pelangganRepository: PelangganRepository,
-    override val daftarVillaRepository: DaftarVillaRepository
+    override val daftarVillaRepository: DaftarVillaRepository,
+    override val reviewRepository: NetworkReviewRepository
 ) : AppReservasiContainer {
 
     private val baseUrl = "http://10.0.2.2:3000/api/reservasi/"

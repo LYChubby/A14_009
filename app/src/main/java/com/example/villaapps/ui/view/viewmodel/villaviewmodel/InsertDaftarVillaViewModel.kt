@@ -8,6 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.villaapps.model.DaftarVilla
 import com.example.villaapps.repository.DaftarVillaRepository
+import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.InsertReservasiUiEvent
+import com.example.villaapps.ui.view.viewmodel.reviewviewmodel.InsertReviewUiEvent
+import com.example.villaapps.ui.view.viewmodel.reviewviewmodel.isValid
+import com.example.villaapps.ui.view.viewmodel.reviewviewmodel.toReview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -41,6 +45,13 @@ fun DaftarVilla.toInsertDaftarVillaUiEvent(): InsertDaftarVillaUiEvent = InsertD
     kamarTersedia = kamarTersedia,
 )
 
+fun InsertDaftarVillaUiEvent.isValid(): Boolean {
+    return idVilla != 0 &&
+            namaVilla.isNotBlank() &&
+            alamat.isNotBlank() &&
+            kamarTersedia > 0
+}
+
 class InsertDaftarVillaViewModel (
     private val daftarVillaRepository: DaftarVillaRepository
 ): ViewModel() {
@@ -52,13 +63,18 @@ class InsertDaftarVillaViewModel (
         insertDaftarVillaUiState = InsertDaftarVillaUiState(insertDaftarVillaUiEvent = insertDaftarVillaUiEvent)
     }
 
-    suspend fun insertDaftarVilla() {
-        viewModelScope.launch {
-            try {
-                daftarVillaRepository.insertVilla(insertDaftarVillaUiState.insertDaftarVillaUiEvent.toDaftarVilla())
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    suspend fun insertDaftarVilla(): Boolean {
+        val currentState = insertDaftarVillaUiState.insertDaftarVillaUiEvent
+        if (!currentState.isValid()) {
+            return false
+        }
+
+        return try {
+            daftarVillaRepository.insertVilla(currentState.toDaftarVilla())
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
 }

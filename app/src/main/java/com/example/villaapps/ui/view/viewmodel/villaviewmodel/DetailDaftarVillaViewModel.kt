@@ -10,13 +10,18 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.villaapps.model.DaftarVilla
+import com.example.villaapps.model.Review
 import com.example.villaapps.repository.DaftarVillaRepository
+import com.example.villaapps.repository.ReviewRepository
 import com.example.villaapps.ui.view.pages.villaview.DestinasiDetailVilla
 import kotlinx.coroutines.launch
 import java.io.IOException
 
 sealed class DetailDaftarVillaUiState {
-    data class Success(val daftarVilla: DaftarVilla) : DetailDaftarVillaUiState()
+    data class Success(
+        val daftarVilla: DaftarVilla,
+//        val reviews: List<Review>
+    ) : DetailDaftarVillaUiState()
     object Error : DetailDaftarVillaUiState()
     object Loading : DetailDaftarVillaUiState()
 }
@@ -24,7 +29,8 @@ sealed class DetailDaftarVillaUiState {
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 class DetailDaftarVillaViewModel(
     savedStateHandle: SavedStateHandle,
-    private val daftarVillaRepository: DaftarVillaRepository
+    private val daftarVillaRepository: DaftarVillaRepository,
+    private val reviewRepository: ReviewRepository
 ): ViewModel() {
     private val idVilla: Int = checkNotNull(savedStateHandle[DestinasiDetailVilla.IDVILLA])
 
@@ -32,20 +38,27 @@ class DetailDaftarVillaViewModel(
         private set
 
     init {
-        getDaftarVillaById()
+        getDaftarVillaWithReviews()
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    fun getDaftarVillaById() {
+    fun getDaftarVillaWithReviews() {
         viewModelScope.launch {
             detailDaftarVillaUiState = DetailDaftarVillaUiState.Loading
-            detailDaftarVillaUiState = try {
+            try {
                 val daftarVilla = daftarVillaRepository.getVillaById(idVilla)
-                DetailDaftarVillaUiState.Success(daftarVilla)
+
+//                val reviews = reviewRepository.getAllReview().data.filter { review ->
+//                    review.idReservasi == idVilla
+//                }
+                detailDaftarVillaUiState = DetailDaftarVillaUiState.Success(
+                    daftarVilla = daftarVilla,
+//                    reviews = reviews
+                )
             } catch (e: IOException) {
-                DetailDaftarVillaUiState.Error
+                detailDaftarVillaUiState = DetailDaftarVillaUiState.Error
             } catch (e: HttpException) {
-                DetailDaftarVillaUiState.Error
+                detailDaftarVillaUiState = DetailDaftarVillaUiState.Error
             }
         }
     }

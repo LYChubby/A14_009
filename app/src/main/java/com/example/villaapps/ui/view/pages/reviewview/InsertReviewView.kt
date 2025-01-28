@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Grade
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Villa
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -26,11 +27,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -190,6 +196,7 @@ fun EntryReviewScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var showError by remember { mutableStateOf(false) }
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -201,14 +208,31 @@ fun EntryReviewScreen(
             )
         }
     ) {
-            innerPadding ->
+        innerPadding ->
+        if (showError) {
+            AlertDialog(
+                onDismissRequest = { showError = false },
+                title = { Text("Error") },
+                text = { Text("Semua data harus diisi!") },
+                confirmButton = {
+                    TextButton(onClick = { showError = false }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
+
         EntryBodyReview(
             insertReviewUiState = viewModel.insertReviewuiState,
             onReviewValueChange = viewModel::updateInsertReviewUiState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.insertReview()
-                    navigateBack()
+                    val success = viewModel.insertReview()
+                    if (success) {
+                        navigateBack()
+                    } else {
+                        showError = true
+                    }
                 }
             },
             modifier = Modifier.padding(innerPadding)

@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.villaapps.model.Pelanggan
 import com.example.villaapps.repository.PelangganRepository
+import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.isValid
+import com.example.villaapps.ui.view.viewmodel.reservasiviewmodel.toReservasi
+import com.example.villaapps.ui.view.viewmodel.villaviewmodel.InsertDaftarVillaUiEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -38,6 +41,12 @@ fun Pelanggan.toInsertPelangganUiEvent(): InsertPelangganUiEvent = InsertPelangg
     noHp = noHp
 )
 
+fun InsertPelangganUiEvent.isValid(): Boolean {
+    return idPelanggan != 0 &&
+            namaPelanggan.isNotBlank() &&
+            noHp.isNotBlank()
+}
+
 class InsertPelangganViewModel(
     private val pelangganRepository: PelangganRepository
 ): ViewModel() {
@@ -49,13 +58,18 @@ class InsertPelangganViewModel(
         insertPelangganUiState = InsertPelangganUiState(insertPelangganUiEvent = insertPelangganUiEvent)
     }
 
-    suspend fun insertPelanggan() {
-        viewModelScope.launch {
-            try {
-                pelangganRepository.insertPelanggan(insertPelangganUiState.insertPelangganUiEvent.toPelanggan())
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    suspend fun insertPelanggan(): Boolean {
+        val currentState = insertPelangganUiState.insertPelangganUiEvent
+        if (!currentState.isValid()) {
+            return false
+        }
+
+        return try {
+            pelangganRepository.insertPelanggan(currentState.toPelanggan())
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
 }
